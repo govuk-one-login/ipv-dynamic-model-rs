@@ -1,6 +1,8 @@
-use serde::{Deserialize, Serialize};
 use crate::models::attribute::Attribute;
-use crate::models::score::*;
+use crate::models::score::{
+    ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore, VerificationScore,
+};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Claim {

@@ -1,7 +1,9 @@
-use serde::{Deserialize, Serialize};
 use crate::models::claim::Claim;
-use crate::models::score::{ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore, VerificationScore};
+use crate::models::score::{
+    ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore, VerificationScore,
+};
 use crate::models::user_requirement::UserRequirement;
+use serde::{Deserialize, Serialize};
 
 type RequestsPerSecond = f64;
 type SuccessRate = f64;
@@ -12,23 +14,18 @@ pub struct Cri {
     pub name: String,
     pub description: String,
     pub throughput: RequestsPerSecond,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub possible_cis: Vec<String>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub mitigates_cis: Vec<String>,
     pub success_rate: SuccessRate,
     #[serde(with = "yaml_serde::with::singleton_map")]
     pub user_requirements: Option<UserRequirement>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub claims_required: Vec<Claim>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub claims_produced: Vec<Claim>,
-    #[serde(skip_serializing_if = "String::is_empty")]
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub comments: String,
     pub strength_score: Option<StrengthScore>,
     pub validity_score: Option<ValidityScore>,

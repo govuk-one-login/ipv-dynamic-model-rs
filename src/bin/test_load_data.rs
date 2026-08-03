@@ -1,6 +1,6 @@
-use std::fs::File;
-use serde::Deserialize;
 use ipv_dynamic_model_rs::models::cri::Cri;
+use serde::Deserialize;
+use std::fs::File;
 
 fn main() -> anyhow::Result<()> {
     println!("Loading data");

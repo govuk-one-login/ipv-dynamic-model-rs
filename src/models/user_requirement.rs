@@ -23,9 +23,9 @@ pub enum UserRequirement {
     #[serde(rename = "Smart Phone")]
     SmartPhone,
     #[serde(rename = "all")]
-    All(Vec<UserRequirement>),
+    All(Vec<Self>),
     #[serde(rename = "any")]
-    Any(Vec<UserRequirement>),
+    Any(Vec<Self>),
 }
 
 #[cfg(test)]
@@ -51,10 +51,16 @@ mod tests {
     fn test_nested_serialize_deserialize() {
         let user_requirement = Wrapper(UserRequirement::All(vec![
             UserRequirement::UkPassport,
-            UserRequirement::Any(vec![UserRequirement::UkDrivingLicense, UserRequirement::BankAccount]),
+            UserRequirement::Any(vec![
+                UserRequirement::UkDrivingLicense,
+                UserRequirement::BankAccount,
+            ]),
         ]));
         let serialized = yaml_serde::to_string(&user_requirement).unwrap();
-        assert_eq!(serialized, "all:\n- UK Passport\n- any:\n  - UK Driving License\n  - Bank Account\n");
+        assert_eq!(
+            serialized,
+            "all:\n- UK Passport\n- any:\n  - UK Driving License\n  - Bank Account\n"
+        );
         let deserialized: Wrapper = yaml_serde::from_str(&serialized).unwrap();
         assert_eq!(user_requirement.0, deserialized.0);
     }
