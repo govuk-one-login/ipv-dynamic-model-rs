@@ -33,3 +33,37 @@ pub struct Cri {
     pub activity_history_score: Option<ActivityHistoryScore>,
     pub verification_score: Option<VerificationScore>,
 }
+
+impl Cri {
+    /// Does this CRI produce any type of score
+    #[must_use]
+    pub const fn has_score(&self) -> bool {
+        self.strength_score.is_some()
+            || self.validity_score.is_some()
+            || self.identity_fraud_score.is_some()
+            || self.activity_history_score.is_some()
+            || self.verification_score.is_some()
+    }
+
+    /// How many types of scores does this CRI produce?
+    #[must_use]
+    pub fn score_count(&self) -> usize {
+        [
+            self.strength_score.is_some(),
+            self.validity_score.is_some(),
+            self.identity_fraud_score.is_some(),
+            self.activity_history_score.is_some(),
+            self.verification_score.is_some(),
+        ]
+        .iter()
+        .copied()
+        .filter(|score| *score)
+        .count()
+    }
+}
+
+impl PartialEq for Cri {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
