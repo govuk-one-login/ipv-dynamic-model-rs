@@ -9,10 +9,10 @@ pub struct Scores {
     pub strength: Option<StrengthScore>,
     #[serde(rename = "validityScore")]
     pub validity: Option<ValidityScore>,
-    #[serde(rename = "identityFraudScore")]
-    pub identity_fraud: Option<IdentityFraudScore>,
     #[serde(rename = "activityHistoryScore")]
     pub activity_history: Option<ActivityHistoryScore>,
+    #[serde(rename = "identityFraudScore")]
+    pub identity_fraud: Option<IdentityFraudScore>,
     #[serde(rename = "verificationScore")]
     pub verification: Option<VerificationScore>,
 }
@@ -28,12 +28,12 @@ pub trait HasScores {
         self.scores().validity.is_some()
     }
 
-    fn has_identity_fraud_score(&self) -> bool {
-        self.scores().identity_fraud.is_some()
-    }
-
     fn has_activity_history_score(&self) -> bool {
         self.scores().activity_history.is_some()
+    }
+
+    fn has_identity_fraud_score(&self) -> bool {
+        self.scores().identity_fraud.is_some()
     }
 
     fn has_verification_score(&self) -> bool {
@@ -78,8 +78,8 @@ pub mod tests_utils {
             Self {
                 strength: StrengthScore::random_choice_option(0.3),
                 validity: ValidityScore::random_choice_option(0.3),
-                identity_fraud: IdentityFraudScore::random_choice_option(0.3),
                 activity_history: ActivityHistoryScore::random_choice_option(0.3),
+                identity_fraud: IdentityFraudScore::random_choice_option(0.3),
                 verification: VerificationScore::random_choice_option(0.3),
             }
         }
@@ -105,12 +105,12 @@ mod tests {
 
         let mut scores = Scores::default();
         assert!(!scores.has_score());
-        scores.identity_fraud = Some(IdentityFraudScore::random_choice());
+        scores.activity_history = Some(ActivityHistoryScore::random_choice());
         assert!(scores.has_score());
 
         let mut scores = Scores::default();
         assert!(!scores.has_score());
-        scores.activity_history = Some(ActivityHistoryScore::random_choice());
+        scores.identity_fraud = Some(IdentityFraudScore::random_choice());
         assert!(scores.has_score());
 
         let mut scores = Scores::default();
@@ -130,10 +130,10 @@ mod tests {
         scores.validity = Some(ValidityScore::random_choice());
         assert_eq!(scores.score_count(), 2);
 
-        scores.identity_fraud = Some(IdentityFraudScore::random_choice());
+        scores.activity_history = Some(ActivityHistoryScore::random_choice());
         assert_eq!(scores.score_count(), 3);
 
-        scores.activity_history = Some(ActivityHistoryScore::random_choice());
+        scores.identity_fraud = Some(IdentityFraudScore::random_choice());
         assert_eq!(scores.score_count(), 4);
 
         scores.verification = Some(VerificationScore::random_choice());

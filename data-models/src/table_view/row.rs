@@ -1,5 +1,4 @@
-use crate::models::cri::Cri;
-use crate::models::scores::HasScores;
+use crate::prelude::*;
 use std::fmt;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -33,12 +32,12 @@ impl Row {
 impl fmt::Display for Row {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Row::Strength => write!(f, "Strength"),
-            Row::Validity => write!(f, "Validity"),
-            Row::IdentityFraud => write!(f, "Identity Fraud"),
-            Row::ActivityHistory => write!(f, "Activity History"),
-            Row::Verification => write!(f, "Verification"),
-            Row::Other => write!(f, "Other"),
+            Self::Strength => write!(f, "Strength"),
+            Self::Validity => write!(f, "Validity"),
+            Self::IdentityFraud => write!(f, "Identity Fraud"),
+            Self::ActivityHistory => write!(f, "Activity History"),
+            Self::Verification => write!(f, "Verification"),
+            Self::Other => write!(f, "Other"),
         }
     }
 }

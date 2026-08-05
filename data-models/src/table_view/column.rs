@@ -1,14 +1,13 @@
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
 use crate::table_view::row::Row;
-use std::fmt;
 use std::rc::Rc;
 
 pub const ROW_ORDER: [Row; 6] = [
     Row::Strength,
     Row::Validity,
-    Row::IdentityFraud,
     Row::ActivityHistory,
+    Row::IdentityFraud,
     Row::Verification,
     Row::Other,
 ];
@@ -17,8 +16,8 @@ pub const ROW_ORDER: [Row; 6] = [
 pub struct Column {
     pub strength: Option<Rc<Cri>>,
     pub validity: Option<Rc<Cri>>,
-    pub identity_fraud: Option<Rc<Cri>>,
     pub activity_history: Option<Rc<Cri>>,
+    pub identity_fraud: Option<Rc<Cri>>,
     pub verification: Option<Rc<Cri>>,
     pub other: Option<Rc<Cri>>,
 }
@@ -28,8 +27,8 @@ impl Column {
     pub fn contains_cri(&self, cri: &Rc<Cri>) -> bool {
         self.strength == Some(cri.clone())
             || self.validity == Some(cri.clone())
-            || self.identity_fraud == Some(cri.clone())
             || self.activity_history == Some(cri.clone())
+            || self.identity_fraud == Some(cri.clone())
             || self.verification == Some(cri.clone())
             || self.other == Some(cri.clone())
     }
@@ -40,8 +39,8 @@ impl Column {
         match row {
             Row::Strength => self.strength.is_some(),
             Row::Validity => self.validity.is_some(),
-            Row::IdentityFraud => self.identity_fraud.is_some(),
             Row::ActivityHistory => self.activity_history.is_some(),
+            Row::IdentityFraud => self.identity_fraud.is_some(),
             Row::Verification => self.verification.is_some(),
             Row::Other => self.other.is_some(),
         }
@@ -58,11 +57,11 @@ impl Column {
         if cri.has_validity_score() {
             self.validity = Some(cri.clone());
         }
-        if cri.has_identity_fraud_score() {
-            self.identity_fraud = Some(cri.clone());
-        }
         if cri.has_activity_history_score() {
             self.activity_history = Some(cri.clone());
+        }
+        if cri.has_identity_fraud_score() {
+            self.identity_fraud = Some(cri.clone());
         }
         if cri.has_verification_score() {
             self.verification = Some(cri.clone());
@@ -70,12 +69,13 @@ impl Column {
     }
 
     /// Get the CRI at a given row in this column
+    #[must_use]
     pub fn get_row(&self, row: Row) -> Option<Rc<Cri>> {
         match row {
             Row::Strength => self.strength.clone(),
             Row::Validity => self.validity.clone(),
-            Row::IdentityFraud => self.identity_fraud.clone(),
             Row::ActivityHistory => self.activity_history.clone(),
+            Row::IdentityFraud => self.identity_fraud.clone(),
             Row::Verification => self.verification.clone(),
             Row::Other => self.other.clone(),
         }
@@ -125,18 +125,18 @@ mod tests {
         assert!(column.is_row_filled(Row::Validity));
 
         let mut cri = create_cri_with_no_scores();
-        cri.scores.identity_fraud = Some(IdentityFraudScore::random_choice());
-
-        assert!(!column.is_row_filled(Row::IdentityFraud));
-        column.add_cri(&Rc::new(cri));
-        assert!(column.is_row_filled(Row::IdentityFraud));
-
-        let mut cri = create_cri_with_no_scores();
         cri.scores.activity_history = Some(ActivityHistoryScore::random_choice());
 
         assert!(!column.is_row_filled(Row::ActivityHistory));
         column.add_cri(&Rc::new(cri));
         assert!(column.is_row_filled(Row::ActivityHistory));
+
+        let mut cri = create_cri_with_no_scores();
+        cri.scores.identity_fraud = Some(IdentityFraudScore::random_choice());
+
+        assert!(!column.is_row_filled(Row::IdentityFraud));
+        column.add_cri(&Rc::new(cri));
+        assert!(column.is_row_filled(Row::IdentityFraud));
 
         let mut cri = create_cri_with_no_scores();
         cri.scores.verification = Some(VerificationScore::random_choice());
@@ -176,8 +176,8 @@ mod tests {
             Some(strength_and_verification.clone())
         );
         assert_eq!(column.get_row(Row::Validity), None);
-        assert_eq!(column.get_row(Row::IdentityFraud), Some(identity_fraud));
         assert_eq!(column.get_row(Row::ActivityHistory), None);
+        assert_eq!(column.get_row(Row::IdentityFraud), Some(identity_fraud));
         assert_eq!(
             column.get_row(Row::Verification),
             Some(strength_and_verification)
