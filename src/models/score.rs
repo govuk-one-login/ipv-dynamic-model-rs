@@ -1,7 +1,7 @@
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub enum StrengthScore {
     One = 1,
     Two = 2,
@@ -10,7 +10,7 @@ pub enum StrengthScore {
 }
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub enum ValidityScore {
     One = 1,
     Two = 2,
@@ -19,7 +19,7 @@ pub enum ValidityScore {
 }
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub enum ActivityHistoryScore {
     One = 1,
     Two = 2,
@@ -28,7 +28,7 @@ pub enum ActivityHistoryScore {
 }
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub enum IdentityFraudScore {
     Zero = 0,
     One = 1,
@@ -37,7 +37,7 @@ pub enum IdentityFraudScore {
 }
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub enum VerificationScore {
     One = 1,
     Two = 2,
@@ -46,7 +46,7 @@ pub enum VerificationScore {
 }
 
 #[cfg(test)]
-mod random_choice {
+mod tests_utils {
     use super::*;
     use crate::test_utils::RandomChoice;
     use rand::prelude::*;

@@ -9,12 +9,15 @@ pub struct Attribute {
 #[cfg(test)]
 pub mod tests_utils {
     use super::*;
-    use crate::test_utils::random_string;
+    use crate::test_utils::{random_string, CreateTestSubject};
 
-    pub fn create_test_attribute() -> Attribute {
-        Attribute {
-            name: random_string("name"),
-            description: random_string("description"),
+    impl CreateTestSubject for Attribute {
+        fn create_test_subject() -> Self {
+            Self {
+                name: random_string("name"),
+                description: random_string("description"),
+            }
         }
+
     }
 }

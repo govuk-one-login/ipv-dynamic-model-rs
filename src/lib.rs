@@ -1,5 +1,5 @@
 pub mod models;
-pub mod system;
+pub mod table_view;
 
 #[cfg(test)]
 mod test_utils;

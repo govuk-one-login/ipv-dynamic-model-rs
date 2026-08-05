@@ -1,9 +1,7 @@
 use crate::models::claim::Claim;
-use crate::models::score::{
-    ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore, VerificationScore,
-};
 use crate::models::user_requirement::UserRequirement;
 use serde::{Deserialize, Serialize};
+use crate::models::scores::{HasScores, Scores};
 
 type RequestsPerSecond = f64;
 type SuccessRate = f64;
@@ -27,43 +25,43 @@ pub struct Cri {
     pub claims_produced: Vec<Claim>,
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub comments: String,
-    pub strength_score: Option<StrengthScore>,
-    pub validity_score: Option<ValidityScore>,
-    pub identity_fraud_score: Option<IdentityFraudScore>,
-    pub activity_history_score: Option<ActivityHistoryScore>,
-    pub verification_score: Option<VerificationScore>,
-}
-
-impl Cri {
-    /// Does this CRI produce any type of score
-    #[must_use]
-    pub const fn has_score(&self) -> bool {
-        self.strength_score.is_some()
-            || self.validity_score.is_some()
-            || self.identity_fraud_score.is_some()
-            || self.activity_history_score.is_some()
-            || self.verification_score.is_some()
-    }
-
-    /// How many types of scores does this CRI produce?
-    #[must_use]
-    pub fn score_count(&self) -> usize {
-        [
-            self.strength_score.is_some(),
-            self.validity_score.is_some(),
-            self.identity_fraud_score.is_some(),
-            self.activity_history_score.is_some(),
-            self.verification_score.is_some(),
-        ]
-        .iter()
-        .copied()
-        .filter(|score| *score)
-        .count()
-    }
+    #[serde(flatten)]
+    pub scores: Scores,
 }
 
 impl PartialEq for Cri {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name
+    }
+}
+
+impl HasScores for Cri {
+    fn scores(&self) -> &Scores {
+        &self.scores
+    }
+}
+
+#[cfg(test)]
+pub mod tests_utils {
+    use rand::random_range;
+    use crate::test_utils::{random_string, RandomChoice, random_vec, CreateTestSubject};
+    use super::*;
+
+    impl CreateTestSubject for Cri {
+        fn create_test_subject() -> Self {
+            Self {
+                name: random_string("name"),
+                description: random_string("description"),
+                throughput: random_range(0.0..200.0),
+                possible_cis: vec![],
+                mitigates_cis: vec![],
+                success_rate: random_range(0.0..1.0),
+                user_requirements: UserRequirement::random_choice_option(0.3),
+                claims_required: random_vec(0, 3, Claim::create_test_subject),
+                claims_produced: random_vec(0, 3, Claim::create_test_subject),
+                comments: random_string("description"),
+                scores: Scores::create_test_subject(),
+            }
+        }
     }
 }
