@@ -1,6 +1,6 @@
-use std::fmt;
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
+use std::fmt;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Row {

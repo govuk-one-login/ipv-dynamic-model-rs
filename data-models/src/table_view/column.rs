@@ -1,7 +1,7 @@
-use std::fmt;
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
 use crate::table_view::row::Row;
+use std::fmt;
 use std::rc::Rc;
 
 pub const ROW_ORDER: [Row; 6] = [
