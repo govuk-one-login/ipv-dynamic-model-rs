@@ -1,3 +1,9 @@
 [workspace]
 resolver = "3"
-members = ["data-models"]
+members = [
+    "data-models",
+    "ui-dioxus",
+]
+
+[workspace.dependencies]
+data-models = { path = "data-models" }
