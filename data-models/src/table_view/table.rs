@@ -39,6 +39,7 @@ impl Table {
         self.columns.iter().any(|column| column.contains_cri(cri))
     }
 
+    // ToDo: This needs to accept CRI so that it can check all rows a CRI would appear in
     #[must_use]
     fn get_first_available_column(&mut self, row: Row) -> &mut Column {
         // This function is a bit weird to get around lifetime woes
@@ -51,7 +52,7 @@ impl Table {
         self.columns
             .iter_mut()
             .find(|c| !c.is_row_filled(row))
-            .unwrap()
+            .unwrap() // This will always be ok because we'll have just added an empty column
     }
 
     #[must_use]

@@ -3,6 +3,8 @@ use crate::models::scores::{HasScores, Scores};
 use crate::models::user_requirement::UserRequirement;
 use serde::{Deserialize, Serialize};
 
+// ToDo: These should be newtypes to validate they are not negative and that success rate is less
+// than or equal to 1.0
 type RequestsPerSecond = f64;
 type SuccessRate = f64;
 
