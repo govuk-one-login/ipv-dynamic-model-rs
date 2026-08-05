@@ -1,12 +1,12 @@
 [package]
-name = "ipv-dynamic-model-rs"
+name = "data_models"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 anyhow = "1.0.104"
-serde = { version = "1.0.229", features = ["derive"] }
-yaml_serde = "0.10.4"
+serde = { workspace = true, features = ["derive"] }
+yaml_serde = { workspace = true }
 serde_repr = "0.1.21"
 
 [dev-dependencies]

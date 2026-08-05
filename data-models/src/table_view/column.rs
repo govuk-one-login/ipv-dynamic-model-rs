@@ -1,3 +1,4 @@
+use std::fmt;
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
 use crate::table_view::row::Row;

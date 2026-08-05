@@ -1,3 +1,4 @@
+use std::fmt;
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
 
@@ -25,6 +26,19 @@ impl Row {
             Self::ActivityHistory => cri.has_activity_history_score(),
             Self::Verification => cri.has_verification_score(),
             Self::Other => !cri.has_score(),
+        }
+    }
+}
+
+impl fmt::Display for Row {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Row::Strength => write!(f, "Strength"),
+            Row::Validity => write!(f, "Validity"),
+            Row::IdentityFraud => write!(f, "Identity Fraud"),
+            Row::ActivityHistory => write!(f, "Activity History"),
+            Row::Verification => write!(f, "Verification"),
+            Row::Other => write!(f, "Other"),
         }
     }
 }

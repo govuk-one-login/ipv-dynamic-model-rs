@@ -6,4 +6,6 @@ members = [
 ]
 
 [workspace.dependencies]
-data-models = { path = "data-models" }
+data_models = { path = "data-models" }
+serde = { version =  "1.0.229" }
+yaml_serde = "0.10.4"

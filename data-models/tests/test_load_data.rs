@@ -1,4 +1,4 @@
-use ipv_dynamic_model_rs::models::cri::Cri;
+use data_models::models::cri::Cri;
 use serde::Deserialize;
 use std::fs::File;
 
