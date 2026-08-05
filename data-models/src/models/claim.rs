@@ -38,8 +38,8 @@ pub mod tests_utils {
 
 #[cfg(test)]
 mod tests {
-    use crate::test_utils::CreateTestSubject;
     use super::*;
+    use crate::test_utils::CreateTestSubject;
 
     #[test]
     fn test_has_scores() {

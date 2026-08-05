@@ -1,7 +1,7 @@
 use crate::models::claim::Claim;
+use crate::models::scores::{HasScores, Scores};
 use crate::models::user_requirement::UserRequirement;
 use serde::{Deserialize, Serialize};
-use crate::models::scores::{HasScores, Scores};
 
 type RequestsPerSecond = f64;
 type SuccessRate = f64;
@@ -43,9 +43,9 @@ impl HasScores for Cri {
 
 #[cfg(test)]
 pub mod tests_utils {
-    use rand::random_range;
-    use crate::test_utils::{random_string, RandomChoice, random_vec, CreateTestSubject};
     use super::*;
+    use crate::test_utils::{CreateTestSubject, RandomChoice, random_string, random_vec};
+    use rand::random_range;
 
     impl CreateTestSubject for Cri {
         fn create_test_subject() -> Self {

@@ -3,7 +3,7 @@ use crate::models::score::{
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, Default, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Scores {
     #[serde(rename = "strengthScore")]
     pub strength: Option<StrengthScore>,
@@ -88,8 +88,8 @@ pub mod tests_utils {
 
 #[cfg(test)]
 mod tests {
-    use crate::test_utils::RandomChoice;
     use super::*;
+    use crate::test_utils::RandomChoice;
 
     #[test]
     fn test_has_score() {

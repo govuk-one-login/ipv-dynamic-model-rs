@@ -49,7 +49,10 @@ mod random_choice {
                 Self::SmartPhone,
             ];
             let random_non_recursive = || {
-                non_recursive_choices.choose(&mut rand::rng()).unwrap().clone()
+                non_recursive_choices
+                    .choose(&mut rand::rng())
+                    .unwrap()
+                    .clone()
             };
 
             let recursive_choices = [

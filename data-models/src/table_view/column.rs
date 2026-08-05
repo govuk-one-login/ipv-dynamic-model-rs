@@ -1,7 +1,7 @@
 use crate::models::cri::Cri;
+use crate::models::scores::HasScores;
 use crate::table_view::row::Row;
 use std::rc::Rc;
-use crate::models::scores::HasScores;
 
 pub const ROW_ORDER: [Row; 6] = [
     Row::Strength,
@@ -83,10 +83,12 @@ impl Column {
 
 #[cfg(test)]
 mod tests {
-    use crate::models::score::{ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore, VerificationScore};
+    use super::*;
+    use crate::models::score::{
+        ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore, VerificationScore,
+    };
     use crate::models::scores::Scores;
     use crate::test_utils::{CreateTestSubject, RandomChoice};
-    use super::*;
 
     fn create_cri_with_no_scores() -> Cri {
         let mut cri = Cri::create_test_subject();
@@ -168,11 +170,17 @@ mod tests {
         column.add_cri(&identity_fraud);
         column.add_cri(&other);
 
-        assert_eq!(column.get_row(Row::Strength), Some(strength_and_verification.clone()));
+        assert_eq!(
+            column.get_row(Row::Strength),
+            Some(strength_and_verification.clone())
+        );
         assert_eq!(column.get_row(Row::Validity), None);
         assert_eq!(column.get_row(Row::IdentityFraud), Some(identity_fraud));
         assert_eq!(column.get_row(Row::ActivityHistory), None);
-        assert_eq!(column.get_row(Row::Verification), Some(strength_and_verification));
+        assert_eq!(
+            column.get_row(Row::Verification),
+            Some(strength_and_verification)
+        );
         assert_eq!(column.get_row(Row::Other), Some(other));
     }
 }
