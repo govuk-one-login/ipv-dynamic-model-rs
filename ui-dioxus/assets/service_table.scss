@@ -1,0 +1,43 @@
+.service-table {
+  td, th {
+    height: 100px;
+    width: 100px;
+    text-align: center;
+    padding: 5px;
+  }
+
+  td {
+    &.good {
+      border: 5px solid green;
+    }
+
+    &.degraded {
+      border: 5px dashed orange;
+    }
+
+    &.off {
+      border: 5px solid red;
+    }
+
+    &.Orange {
+      background: darkorange;
+    }
+
+    &.Kiwi {
+      background: saddlebrown;
+    }
+
+    &.Lime {
+      background: darkgreen;
+    }
+
+    &.Other {
+      background: pink;
+      color: black;
+    }
+
+    &.not-usable {
+      opacity: 50%;
+    }
+  }
+}
