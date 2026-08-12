@@ -1,11 +1,9 @@
 use crate::models::claim::Claim;
+use crate::models::requests_per_second::RequestsPerSecond;
 use crate::models::scores::{HasScores, Scores};
 use crate::models::user_requirement::UserRequirement;
 use serde::{Deserialize, Serialize};
 
-// ToDo: These should be newtypes to validate they are not negative and that success rate is less
-// than or equal to 1.0
-type RequestsPerSecond = f64;
 type SuccessRate = f64;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -54,7 +52,7 @@ pub mod tests_utils {
             Self {
                 name: random_string("name"),
                 description: random_string("description"),
-                throughput: random_range(0.0..200.0),
+                throughput: RequestsPerSecond::create_test_subject(),
                 possible_cis: vec![],
                 mitigates_cis: vec![],
                 success_rate: random_range(0.0..1.0),

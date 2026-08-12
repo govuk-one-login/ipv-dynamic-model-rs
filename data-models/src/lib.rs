@@ -11,6 +11,7 @@ pub mod prelude {
         attribute::Attribute,
         claim::Claim,
         cri::Cri,
+        requests_per_second::RequestsPerSecond,
         score::{
             ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore,
             VerificationScore,
