@@ -1,6 +1,6 @@
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
-use crate::table_view::column::{Column, ROW_ORDER};
+use crate::table_view::column::Column;
 use crate::table_view::row::Row;
 use std::rc::Rc;
 
@@ -21,7 +21,7 @@ impl Table {
             columns: Vec::with_capacity(cris.len()),
         };
 
-        for row in ROW_ORDER {
+        for row in Column::row_order() {
             for cri in &cris {
                 if table.contains_cri(cri) || !row.cri_appears_in_row(cri) {
                     continue;

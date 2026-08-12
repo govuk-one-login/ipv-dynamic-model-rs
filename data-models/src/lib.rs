@@ -18,9 +18,5 @@ pub mod prelude {
         scores::{HasScores, Scores},
         user_requirement::UserRequirement,
     };
-    pub use super::table_view::{
-        column::{Column, ROW_ORDER},
-        row::Row,
-        table::Table,
-    };
+    pub use super::table_view::{column::Column, row::Row, service::Service, table::Table};
 }

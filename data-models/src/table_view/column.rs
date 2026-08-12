@@ -80,6 +80,18 @@ impl Column {
             Row::Other => self.other.clone(),
         }
     }
+
+    #[must_use]
+    pub const fn row_order() -> [Row; 6] {
+        [
+            Row::Strength,
+            Row::Validity,
+            Row::ActivityHistory,
+            Row::IdentityFraud,
+            Row::Verification,
+            Row::Other,
+        ]
+    }
 }
 
 #[cfg(test)]

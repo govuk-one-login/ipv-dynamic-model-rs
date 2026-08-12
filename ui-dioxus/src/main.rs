@@ -1,9 +1,6 @@
 #![allow(clippy::volatile_composites)]
 
-use data_models::models::cri::Cri;
-use data_models::table_view::column::ROW_ORDER;
-use data_models::table_view::row::Row;
-use data_models::table_view::table::Table;
+use data_models::prelude::*;
 use dioxus::prelude::*;
 use serde::Deserialize;
 use std::fs::File;
@@ -56,10 +53,8 @@ fn SuccessRate(success_rate: f64) -> Element {
 fn DynamicJourneyTable() -> Element {
     let mut rows = Vec::new();
 
-    for row in ROW_ORDER {
-        rows.push(rsx!(
-            DynamicJourneyRow { row }
-        )?)
+    for row in Column::row_order() {
+        rows.push(rsx!(DynamicJourneyRow { row })?);
     }
 
     rsx! {
@@ -73,9 +68,7 @@ fn DynamicJourneyRow(row: Row) -> Element {
     let mut row_data = Vec::new();
     for cri in table.get_row(row) {
         let data = match cri {
-            None => rsx!(
-                td {}
-            )?,
+            None => rsx!(td {})?,
             Some(cri) => rsx!(
                 td { "{cri.name}" }
             )?,
@@ -94,10 +87,8 @@ fn DynamicJourneyRow(row: Row) -> Element {
 #[component]
 fn App() -> Element {
     let mut cris = Vec::new();
-    for document in
-        yaml_serde::Deserializer::from_reader(File::open("../test-data/test.yaml").unwrap())
-    {
-        cris.push(Rc::new(Cri::deserialize(document).unwrap()));
+    for document in yaml_serde::Deserializer::from_reader(File::open("../test-data/test.yaml")?) {
+        cris.push(Rc::new(Cri::deserialize(document)?));
     }
     use_context_provider(|| Table::new(cris));
 
