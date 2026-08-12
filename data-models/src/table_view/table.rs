@@ -1,5 +1,6 @@
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
+use crate::prelude::Service;
 use crate::table_view::column::Column;
 use crate::table_view::row::Row;
 use std::rc::Rc;
@@ -56,7 +57,7 @@ impl Table {
     }
 
     #[must_use]
-    pub fn get_row(&self, row: Row) -> Vec<Option<Rc<Cri>>> {
+    pub fn get_row(&self, row: Row) -> Vec<Option<Service>> {
         let mut row_data = vec![None; self.columns.len()];
 
         row_data

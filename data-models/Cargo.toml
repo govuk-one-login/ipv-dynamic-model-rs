@@ -4,10 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-anyhow = "1.0.104"
+anyhow = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 yaml_serde = { workspace = true }
 serde_repr = "0.1.21"
+thiserror = {  workspace = true }
 
 [dev-dependencies]
 rand = { version = "0.10.2", features = ["thread_rng"] }

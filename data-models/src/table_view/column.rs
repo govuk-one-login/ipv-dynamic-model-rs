@@ -1,36 +1,31 @@
-use crate::models::cri::Cri;
-use crate::models::scores::HasScores;
-use crate::table_view::row::Row;
+use crate::prelude::*;
 use std::rc::Rc;
-
-pub const ROW_ORDER: [Row; 6] = [
-    Row::Strength,
-    Row::Validity,
-    Row::ActivityHistory,
-    Row::IdentityFraud,
-    Row::Verification,
-    Row::Other,
-];
 
 #[derive(Debug, Clone, Default)]
 pub struct Column {
-    pub strength: Option<Rc<Cri>>,
-    pub validity: Option<Rc<Cri>>,
-    pub activity_history: Option<Rc<Cri>>,
-    pub identity_fraud: Option<Rc<Cri>>,
-    pub verification: Option<Rc<Cri>>,
-    pub other: Option<Rc<Cri>>,
+    pub strength: Option<Service>,
+    pub validity: Option<Service>,
+    pub activity_history: Option<Service>,
+    pub identity_fraud: Option<Service>,
+    pub verification: Option<Service>,
+    pub other: Option<Service>,
 }
 
 impl Column {
+    /// Checks if the column already contains the given CRI
     #[must_use]
     pub fn contains_cri(&self, cri: &Rc<Cri>) -> bool {
-        self.strength == Some(cri.clone())
-            || self.validity == Some(cri.clone())
-            || self.activity_history == Some(cri.clone())
-            || self.identity_fraud == Some(cri.clone())
-            || self.verification == Some(cri.clone())
-            || self.other == Some(cri.clone())
+        // Closure to simplify having to do the same check for every row
+        let is_cri_in_row = |cri: &Rc<Cri>, row: &Option<Service>| -> bool {
+            row.as_ref().is_some_and(|service| service == cri.as_ref())
+        };
+
+        is_cri_in_row(cri, &self.strength)
+            || is_cri_in_row(cri, &self.validity)
+            || is_cri_in_row(cri, &self.activity_history)
+            || is_cri_in_row(cri, &self.identity_fraud)
+            || is_cri_in_row(cri, &self.verification)
+            || is_cri_in_row(cri, &self.other)
     }
 
     /// In this column, does the given row already have an entry?
@@ -48,29 +43,29 @@ impl Column {
 
     pub fn add_cri(&mut self, cri: &Rc<Cri>) {
         if !cri.scores.has_score() {
-            self.other = Some(cri.clone());
+            self.other = Some(Service::new(cri.clone()));
             return;
         }
         if cri.has_strength_score() {
-            self.strength = Some(cri.clone());
+            self.strength = Some(Service::new(cri.clone()));
         }
         if cri.has_validity_score() {
-            self.validity = Some(cri.clone());
+            self.validity = Some(Service::new(cri.clone()));
         }
         if cri.has_activity_history_score() {
-            self.activity_history = Some(cri.clone());
+            self.activity_history = Some(Service::new(cri.clone()));
         }
         if cri.has_identity_fraud_score() {
-            self.identity_fraud = Some(cri.clone());
+            self.identity_fraud = Some(Service::new(cri.clone()));
         }
         if cri.has_verification_score() {
-            self.verification = Some(cri.clone());
+            self.verification = Some(Service::new(cri.clone()));
         }
     }
 
     /// Get the CRI at a given row in this column
     #[must_use]
-    pub fn get_row(&self, row: Row) -> Option<Rc<Cri>> {
+    pub fn get_row(&self, row: Row) -> Option<Service> {
         match row {
             Row::Strength => self.strength.clone(),
             Row::Validity => self.validity.clone(),
@@ -184,16 +179,19 @@ mod tests {
         column.add_cri(&other);
 
         assert_eq!(
-            column.get_row(Row::Strength),
-            Some(strength_and_verification.clone())
+            &column.get_row(Row::Strength).unwrap(),
+            strength_and_verification.as_ref()
         );
         assert_eq!(column.get_row(Row::Validity), None);
         assert_eq!(column.get_row(Row::ActivityHistory), None);
-        assert_eq!(column.get_row(Row::IdentityFraud), Some(identity_fraud));
         assert_eq!(
-            column.get_row(Row::Verification),
-            Some(strength_and_verification)
+            &column.get_row(Row::IdentityFraud).unwrap(),
+            identity_fraud.as_ref()
         );
-        assert_eq!(column.get_row(Row::Other), Some(other));
+        assert_eq!(
+            &column.get_row(Row::Verification).unwrap(),
+            strength_and_verification.as_ref()
+        );
+        assert_eq!(&column.get_row(Row::Other).unwrap(), other.as_ref());
     }
 }

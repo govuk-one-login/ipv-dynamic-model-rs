@@ -6,6 +6,8 @@ members = [
 ]
 
 [workspace.dependencies]
+anyhow = "1.0.104"
 data_models = { path = "data-models" }
 serde = { version =  "1.0.229" }
+thiserror = "2.0.19"
 yaml_serde = "0.10.4"

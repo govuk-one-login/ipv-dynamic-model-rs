@@ -107,4 +107,14 @@ mod tests {
         let cri = create_cri_with_no_scores();
         assert!(Row::Other.cri_appears_in_row(&cri));
     }
+
+    #[test]
+    fn test_display() {
+        assert_eq!(format!("{}", Row::Strength), "Strength");
+        assert_eq!(format!("{}", Row::Validity), "Validity");
+        assert_eq!(format!("{}", Row::IdentityFraud), "Identity Fraud");
+        assert_eq!(format!("{}", Row::ActivityHistory), "Activity History");
+        assert_eq!(format!("{}", Row::Verification), "Verification");
+        assert_eq!(format!("{}", Row::Other), "Other");
+    }
 }
