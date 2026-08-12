@@ -1,4 +1,5 @@
 use crate::models::claim::Claim;
+use crate::models::owner::Owner;
 use crate::models::requests_per_second::RequestsPerSecond;
 use crate::models::scores::{HasScores, Scores};
 use crate::models::user_requirement::UserRequirement;
@@ -11,6 +12,7 @@ type SuccessRate = f64;
 pub struct Cri {
     pub name: String,
     pub description: String,
+    pub owner: Owner,
     pub throughput: RequestsPerSecond,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub possible_cis: Vec<String>,
@@ -44,6 +46,7 @@ impl HasScores for Cri {
 #[cfg(test)]
 pub mod tests_utils {
     use super::*;
+    use crate::models::owner::Owner;
     use crate::test_utils::{CreateTestSubject, RandomChoice, random_string, random_vec};
     use rand::random_range;
 
@@ -52,6 +55,7 @@ pub mod tests_utils {
             Self {
                 name: random_string("name"),
                 description: random_string("description"),
+                owner: Owner::random_choice(),
                 throughput: RequestsPerSecond::create_test_subject(),
                 possible_cis: vec![],
                 mitigates_cis: vec![],

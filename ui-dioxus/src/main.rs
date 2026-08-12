@@ -1,5 +1,8 @@
 #![allow(clippy::volatile_composites)]
 
+mod service_table;
+
+use crate::service_table::row::ServiceRow;
 use data_models::prelude::*;
 use dioxus::prelude::*;
 use serde::Deserialize;

@@ -1,6 +1,7 @@
 use crate::models::requests_per_second::RequestsPerSecond;
 use crate::prelude::Cri;
-use std::ops::Deref;
+use core::fmt;
+use core::ops::Deref;
 use std::rc::Rc;
 
 // Two degraded systems are not equivalent
@@ -10,6 +11,16 @@ pub enum ServiceStatus {
     Good,
     Degraded,
     Off,
+}
+
+impl fmt::Display for ServiceStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Good => write!(f, "good"),
+            Self::Degraded => write!(f, "degraded"),
+            Self::Off => write!(f, "off"),
+        }
+    }
 }
 
 /// Service wraps a CRI model to make a pretend running service of that model. You can turn the

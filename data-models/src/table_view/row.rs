@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use std::fmt;
+use core::fmt;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Row {
