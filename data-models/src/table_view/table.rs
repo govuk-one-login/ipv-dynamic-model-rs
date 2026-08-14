@@ -1,7 +1,6 @@
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
-use crate::prelude::Service;
-use crate::table_view::column::Column;
+use crate::table_view::column::{Column, RowContent};
 use crate::table_view::row::Row;
 use std::rc::Rc;
 
@@ -57,17 +56,11 @@ impl Table {
     }
 
     #[must_use]
-    pub fn get_row(&self, row: Row) -> Vec<Option<Service>> {
-        let mut row_data = vec![None; self.columns.len()];
-
-        row_data
-            .iter_mut()
-            .zip(self.columns.iter())
-            .for_each(|(item, column)| {
-                *item = column.get_row(row);
-            });
-
-        row_data
+    pub fn get_row(&self, row: Row) -> Vec<RowContent> {
+        self.columns
+            .iter()
+            .map(|column| column.get_row(row))
+            .collect()
     }
 }
 
@@ -137,11 +130,11 @@ mod tests {
         let strength_row: Vec<_> = table
             .get_row(Row::Strength)
             .into_iter()
-            .map(|cri| cri.map(|cri| cri.name.clone()))
+            .map(|content| content.get_service())
             .collect();
         assert_eq!(
             strength_row,
-            vec![Some("cri1".to_string()), Some("cri5".to_string()), None]
+            vec![Some(cri1.into()), Some(cri5.into()), None]
         );
     }
 }

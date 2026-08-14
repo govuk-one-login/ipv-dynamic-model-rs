@@ -99,6 +99,16 @@ impl PartialEq<Cri> for Service {
     }
 }
 
+impl From<Rc<Cri>> for Service {
+    fn from(cri: Rc<Cri>) -> Self {
+        Self {
+            cri,
+            active: true,
+            traffic: RequestsPerSecond::default(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -2,13 +2,12 @@
 
 mod service_table;
 
-use crate::service_table::row::ServiceRow;
+use crate::service_table::table::ServiceTable;
 use data_models::prelude::*;
 use dioxus::prelude::*;
 use serde::Deserialize;
 use std::fs::File;
 use std::rc::Rc;
-use crate::service_table::table::ServiceTable;
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");

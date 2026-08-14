@@ -1,6 +1,6 @@
-use dioxus::prelude::*;
-use data_models::prelude::*;
 use crate::service_table::row::ServiceRow;
+use data_models::prelude::*;
+use dioxus::prelude::*;
 
 #[component]
 pub fn ServiceTable() -> Element {
@@ -15,4 +15,5 @@ pub fn ServiceTable() -> Element {
             class: "service-table",
             {rows.iter()}
         }
-    }}
+    }
+}

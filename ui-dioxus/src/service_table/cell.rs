@@ -2,16 +2,24 @@ use data_models::prelude::*;
 use dioxus::prelude::*;
 
 #[component]
-pub fn ServiceCell(service: Option<Service>) -> Element {
+pub fn ServiceCell(service: RowContent) -> Element {
     match service {
-        None => rsx!(td {}),
-        Some(service) => {
-            rsx!(
+        RowContent::StartOfCri { service, rowspan } => {
+            rsx! {
                 td {
                     class: "{service.get_status()} {service.owner}",
+                    rowspan,
                     "{service.name}"
                 }
-            )
+            }
+        }
+        RowContent::ContinuationOfCri { .. } => {
+            rsx! {}
+        }
+        RowContent::Empty => {
+            rsx! {
+                td {}
+            }
         }
     }
 }
