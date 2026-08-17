@@ -2,7 +2,6 @@ use crate::models::requests_per_second::RequestsPerSecond;
 use crate::prelude::Cri;
 use core::fmt;
 use core::ops::Deref;
-use std::rc::Rc;
 
 // Two degraded systems are not equivalent
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -25,16 +24,16 @@ impl fmt::Display for ServiceStatus {
 
 /// Service wraps a CRI model to make a pretend running service of that model. You can turn the
 /// service on/off, simulate traffic, etc.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Service {
-    cri: Rc<Cri>,
+    cri: Cri,
     active: bool,
     traffic: RequestsPerSecond,
 }
 
 impl Service {
     #[must_use]
-    pub fn new(cri: Rc<Cri>) -> Self {
+    pub fn new(cri: Cri) -> Self {
         Self {
             cri,
             active: true,
@@ -86,21 +85,27 @@ impl Service {
 }
 
 impl Deref for Service {
-    type Target = Rc<Cri>;
+    type Target = Cri;
 
     fn deref(&self) -> &Self::Target {
         &self.cri
     }
 }
 
-impl PartialEq<Cri> for Service {
-    fn eq(&self, other: &Cri) -> bool {
-        other == self.cri.as_ref()
+impl PartialEq for Service {
+    fn eq(&self, other: &Self) -> bool {
+        self.cri == other.cri
     }
 }
 
-impl From<Rc<Cri>> for Service {
-    fn from(cri: Rc<Cri>) -> Self {
+impl PartialEq<Cri> for Service {
+    fn eq(&self, other: &Cri) -> bool {
+        other == &self.cri
+    }
+}
+
+impl From<Cri> for Service {
+    fn from(cri: Cri) -> Self {
         Self {
             cri,
             active: true,
@@ -116,7 +121,7 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let cri = Rc::new(Cri::create_test_subject());
+        let cri = Cri::create_test_subject();
         let service = Service::new(cri.clone());
 
         // The service should contain the CRI, start activated and have no traffic
@@ -127,7 +132,7 @@ mod tests {
 
     #[test]
     fn test_set_active() {
-        let cri = Rc::new(Cri::create_test_subject());
+        let cri = Cri::create_test_subject();
         let mut service = Service::new(cri.clone());
 
         assert_eq!(service.active, true);
@@ -137,7 +142,7 @@ mod tests {
 
     #[test]
     fn test_set_traffic() {
-        let cri = Rc::new(Cri::create_test_subject());
+        let cri = Cri::create_test_subject();
         let mut service = Service::new(cri.clone());
 
         assert_eq!(*service.traffic, 0.0);
@@ -149,7 +154,6 @@ mod tests {
     fn test_get_status() {
         let mut cri = Cri::create_test_subject();
         cri.throughput = RequestsPerSecond::new(10.0).unwrap();
-        let cri = Rc::new(cri);
         let mut service = Service::new(cri.clone());
 
         assert_eq!(service.get_status(), ServiceStatus::Good);

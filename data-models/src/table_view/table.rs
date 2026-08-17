@@ -1,8 +1,10 @@
+use std::cell::RefCell;
 use crate::models::cri::Cri;
 use crate::models::scores::HasScores;
 use crate::table_view::column::{Column, RowContent};
 use crate::table_view::row::Row;
 use std::rc::Rc;
+use crate::prelude::Service;
 
 #[derive(Debug, Clone)]
 pub struct Table {
@@ -11,22 +13,22 @@ pub struct Table {
 
 impl Table {
     #[must_use]
-    pub fn new(mut cris: Vec<Rc<Cri>>) -> Self {
+    pub fn new(mut services: Vec<Rc<RefCell<Service>>>) -> Self {
         // Sort the CRIs by number of scores they contain
-        cris.sort_by_key(|cri| cri.score_count());
-        cris.reverse();
+        services.sort_by_key(|service| service.borrow().score_count());
+        services.reverse();
 
         // We'll prevent reallocation by allocating for worst case scenario
         let mut table = Self {
-            columns: Vec::with_capacity(cris.len()),
+            columns: Vec::with_capacity(services.len()),
         };
 
         for row in Column::row_order() {
-            for cri in &cris {
-                if table.contains_cri(cri) || !row.cri_appears_in_row(cri) {
+            for service in &services {
+                if table.contains_service(&service.borrow()) || !row.cri_appears_in_row(&service.borrow()) {
                     continue;
                 }
-                table.get_first_available_column(row).add_cri(cri);
+                table.get_first_available_column(row).add_service(service.clone());
             }
         }
 
@@ -35,8 +37,8 @@ impl Table {
 
     /// Does the table already have an entry for this CRI anywhere within it
     #[must_use]
-    fn contains_cri(&self, cri: &Rc<Cri>) -> bool {
-        self.columns.iter().any(|column| column.contains_cri(cri))
+    fn contains_service(&self, cri: &Service) -> bool {
+        self.columns.iter().any(|column| column.contains_service(cri))
     }
 
     // ToDo: This needs to accept CRI so that it can check all rows a CRI would appear in
@@ -74,7 +76,7 @@ mod tests {
     use crate::test_utils::{CreateTestSubject, RandomChoice};
     use rand::prelude::SliceRandom;
 
-    fn create_cri_for_rows(name: &str, rows: &[Row]) -> Rc<Cri> {
+    fn create_service_for_rows(name: &str, rows: &[Row]) -> Rc<RefCell<Service>> {
         let mut cri = Cri::create_test_subject();
         cri.name = name.to_string();
         cri.scores = Scores::default();
@@ -95,46 +97,46 @@ mod tests {
                 Row::Other => cri.scores = Scores::default(),
             }
         }
-        Rc::new(cri)
+        Rc::new(RefCell::new(Service::new(cri)))
     }
 
     #[test]
     fn test_all_the_things() {
         // This should populate the first column fully
-        let cri1 = create_cri_for_rows(
-            "cri1",
+        let service1 = create_service_for_rows(
+            "service1",
             &[Row::Strength, Row::IdentityFraud, Row::ActivityHistory],
         );
-        let cri2 = create_cri_for_rows("cri2", &[Row::Validity]);
-        let cri3 = create_cri_for_rows("cri3", &[Row::Verification]);
-        let cri4 = create_cri_for_rows("cri4", &[Row::Other]);
+        let service2 = create_service_for_rows("service2", &[Row::Validity]);
+        let service3 = create_service_for_rows("service3", &[Row::Verification]);
+        let service4 = create_service_for_rows("service4", &[Row::Other]);
 
         // This should appear on column 2
-        let cri5 = create_cri_for_rows("cri5", &[Row::Strength, Row::IdentityFraud]);
+        let service5 = create_service_for_rows("service5", &[Row::Strength, Row::IdentityFraud]);
 
         // This should appear on column 3
-        let cri6 = create_cri_for_rows("cri6", &[Row::IdentityFraud]);
+        let service6 = create_service_for_rows("service6", &[Row::IdentityFraud]);
 
-        let mut cris = vec![
-            cri1.clone(),
-            cri2.clone(),
-            cri3.clone(),
-            cri4.clone(),
-            cri5.clone(),
-            cri6.clone(),
+        let mut services = vec![
+            service1.clone(),
+            service2.clone(),
+            service3.clone(),
+            service4.clone(),
+            service5.clone(),
+            service6.clone(),
         ];
-        cris.shuffle(&mut rand::rng());
+        services.shuffle(&mut rand::rng());
 
-        let table = Table::new(cris);
+        let table = Table::new(services);
 
         let strength_row: Vec<_> = table
             .get_row(Row::Strength)
             .into_iter()
-            .map(|content| content.get_service())
+            .map(|content| content.get_service().map(|service| service.clone()))
             .collect();
         assert_eq!(
             strength_row,
-            vec![Some(cri1.into()), Some(cri5.into()), None]
+            vec![Some(service1.borrow().clone()), Some(service5.borrow().clone()), None]
         );
     }
 }

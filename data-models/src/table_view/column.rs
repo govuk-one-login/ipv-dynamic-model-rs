@@ -1,19 +1,54 @@
 use crate::prelude::*;
+use std::cell::{Ref, RefCell};
+use std::ops::Deref;
 use std::rc::Rc;
 
-#[derive(Clone, Debug, PartialEq)]
-pub enum RowContent {
-    StartOfCri { service: Service, rowspan: usize },
-    ContinuationOfCri { service: Service },
+#[derive(Debug)]
+pub enum RowContent<'s> {
+    StartOfCri {
+        service: Ref<'s, Service>,
+        rowspan: usize,
+    },
+    ContinuationOfCri {
+        service: Ref<'s, Service>,
+    },
     Empty,
 }
 
-impl RowContent {
+// Ridiculous way to allow comparison due to Ref not implementing PartialEq directly
+impl<'s1, 's2> PartialEq<RowContent<'s2>> for RowContent<'s1> {
+    fn eq(&self, other: &RowContent<'s2>) -> bool {
+        match (self, other) {
+            (
+                RowContent::StartOfCri {
+                    service: self_service,
+                    rowspan: self_rowspan,
+                },
+                RowContent::StartOfCri {
+                    service: other_service,
+                    rowspan: other_rowspan,
+                },
+            ) => self_rowspan == other_rowspan && self_service.deref() == other_service.deref(),
+            (
+                RowContent::ContinuationOfCri {
+                    service: self_service,
+                },
+                RowContent::ContinuationOfCri {
+                    service: other_service,
+                },
+            ) => self_service.deref() == other_service.deref(),
+            (RowContent::Empty, RowContent::Empty) => true,
+            _ => false,
+        }
+    }
+}
+
+impl<'s> RowContent<'s> {
     #[must_use]
-    pub fn get_service(&self) -> Option<Service> {
+    pub fn get_service(&'s self) -> Option<Ref<'s, Service>> {
         match self {
             Self::StartOfCri { service, .. } | Self::ContinuationOfCri { service } => {
-                Some(service.clone())
+                Some(Ref::clone(service))
             }
             Self::Empty => None,
         }
@@ -22,29 +57,33 @@ impl RowContent {
 
 #[derive(Debug, Clone, Default)]
 pub struct Column {
-    pub strength: Option<Service>,
-    pub validity: Option<Service>,
-    pub activity_history: Option<Service>,
-    pub identity_fraud: Option<Service>,
-    pub verification: Option<Service>,
-    pub other: Option<Service>,
+    pub strength: Option<Rc<RefCell<Service>>>,
+    pub validity: Option<Rc<RefCell<Service>>>,
+    pub activity_history: Option<Rc<RefCell<Service>>>,
+    pub identity_fraud: Option<Rc<RefCell<Service>>>,
+    pub verification: Option<Rc<RefCell<Service>>>,
+    pub other: Option<Rc<RefCell<Service>>>,
 }
 
 impl Column {
     /// Checks if the column already contains the given CRI
     #[must_use]
-    pub fn contains_cri(&self, cri: &Rc<Cri>) -> bool {
+    pub fn contains_service(&self, service: &Service) -> bool {
         // Closure to simplify having to do the same check for every row
-        let is_cri_in_row = |cri: &Rc<Cri>, row: &Option<Service>| -> bool {
-            row.as_ref().is_some_and(|service| service == cri.as_ref())
+        let is_cri_in_row = |row: &Option<Rc<RefCell<Service>>>| -> bool {
+            row.as_ref().is_some_and(|s| {
+                let inner = s.borrow();
+                inner.deref() == service
+            })
         };
 
-        is_cri_in_row(cri, &self.strength)
-            || is_cri_in_row(cri, &self.validity)
-            || is_cri_in_row(cri, &self.activity_history)
-            || is_cri_in_row(cri, &self.identity_fraud)
-            || is_cri_in_row(cri, &self.verification)
-            || is_cri_in_row(cri, &self.other)
+        // Note: keep this in row order
+        is_cri_in_row(&self.strength)
+            || is_cri_in_row(&self.validity)
+            || is_cri_in_row(&self.verification)
+            || is_cri_in_row(&self.activity_history)
+            || is_cri_in_row(&self.identity_fraud)
+            || is_cri_in_row(&self.other)
     }
 
     /// In this column, does the given row already have an entry?
@@ -60,25 +99,25 @@ impl Column {
         }
     }
 
-    pub fn add_cri(&mut self, cri: &Rc<Cri>) {
-        if !cri.scores.has_score() {
-            self.other = Some(Service::new(cri.clone()));
+    pub fn add_service(&mut self, service: Rc<RefCell<Service>>) {
+        if !service.borrow().scores.has_score() {
+            self.other = Some(service);
             return;
         }
-        if cri.has_strength_score() {
-            self.strength = Some(Service::new(cri.clone()));
+        if service.borrow().has_strength_score() {
+            self.strength = Some(service.clone());
         }
-        if cri.has_validity_score() {
-            self.validity = Some(Service::new(cri.clone()));
+        if service.borrow().has_validity_score() {
+            self.validity = Some(service.clone());
         }
-        if cri.has_activity_history_score() {
-            self.activity_history = Some(Service::new(cri.clone()));
+        if service.borrow().has_activity_history_score() {
+            self.activity_history = Some(service.clone());
         }
-        if cri.has_identity_fraud_score() {
-            self.identity_fraud = Some(Service::new(cri.clone()));
+        if service.borrow().has_identity_fraud_score() {
+            self.identity_fraud = Some(service.clone());
         }
-        if cri.has_verification_score() {
-            self.verification = Some(Service::new(cri.clone()));
+        if service.borrow().has_verification_score() {
+            self.verification = Some(service.clone());
         }
     }
 
@@ -105,7 +144,9 @@ impl Column {
 
         if row_pos > 0
             && let Some(previous_row) = Self::row_order().get(row_pos - 1)
-            && self.get_service_at(*previous_row).as_ref() == Some(&service)
+            && self
+                .get_service_at(*previous_row)
+                .is_some_and(|in_row| in_row.deref() == service.deref())
         {
             return RowContent::ContinuationOfCri { service };
         }
@@ -115,20 +156,23 @@ impl Column {
         let rowspan = Self::row_order()[row_pos..]
             .iter()
             .copied()
-            .take_while(|r| self.get_service_at(*r).as_ref() == Some(&service))
+            .take_while(|r| {
+                self.get_service_at(*r)
+                    .is_some_and(|in_row| in_row.deref() == service.deref())
+            })
             .count();
         RowContent::StartOfCri { service, rowspan }
     }
 
     #[must_use]
-    fn get_service_at(&self, row: Row) -> Option<Service> {
+    fn get_service_at(&self, row: Row) -> Option<Ref<'_, Service>> {
         match row {
-            Row::Strength => self.strength.clone(),
-            Row::Validity => self.validity.clone(),
-            Row::ActivityHistory => self.activity_history.clone(),
-            Row::IdentityFraud => self.identity_fraud.clone(),
-            Row::Verification => self.verification.clone(),
-            Row::Other => self.other.clone(),
+            Row::Strength => self.strength.as_ref().map(|inner| inner.borrow()),
+            Row::Validity => self.validity.as_ref().map(|inner| inner.borrow()),
+            Row::ActivityHistory => self.activity_history.as_ref().map(|inner| inner.borrow()),
+            Row::IdentityFraud => self.identity_fraud.as_ref().map(|inner| inner.borrow()),
+            Row::Verification => self.verification.as_ref().map(|inner| inner.borrow()),
+            Row::Other => self.other.as_ref().map(|inner| inner.borrow()),
         }
     }
 
@@ -163,10 +207,11 @@ mod tests {
     #[test]
     fn test_contains_cri() {
         let mut column = Column::default();
-        let cri = Rc::new(create_cri_with_no_scores());
-        assert!(!column.contains_cri(&cri));
-        column.add_cri(&cri);
-        assert!(column.contains_cri(&cri));
+        let cri = create_cri_with_no_scores();
+        let service = Rc::new(RefCell::new(Service::new(cri)));
+        assert!(!column.contains_service(&service.borrow()));
+        column.add_service(service.clone());
+        assert!(column.contains_service(&service.borrow()));
     }
 
     #[test]
@@ -175,43 +220,49 @@ mod tests {
 
         let mut cri = create_cri_with_no_scores();
         cri.scores.strength = Some(StrengthScore::random_choice());
+        let service = Rc::new(RefCell::new(Service::new(cri)));
 
         assert!(!column.is_row_filled(Row::Strength));
-        column.add_cri(&Rc::new(cri));
+        column.add_service(service);
         assert!(column.is_row_filled(Row::Strength));
 
         let mut cri = create_cri_with_no_scores();
         cri.scores.validity = Some(ValidityScore::random_choice());
+        let service = Rc::new(RefCell::new(Service::new(cri)));
 
         assert!(!column.is_row_filled(Row::Validity));
-        column.add_cri(&Rc::new(cri));
+        column.add_service(service);
         assert!(column.is_row_filled(Row::Validity));
 
         let mut cri = create_cri_with_no_scores();
         cri.scores.activity_history = Some(ActivityHistoryScore::random_choice());
+        let service = Rc::new(RefCell::new(Service::new(cri)));
 
         assert!(!column.is_row_filled(Row::ActivityHistory));
-        column.add_cri(&Rc::new(cri));
+        column.add_service(service);
         assert!(column.is_row_filled(Row::ActivityHistory));
 
         let mut cri = create_cri_with_no_scores();
         cri.scores.identity_fraud = Some(IdentityFraudScore::random_choice());
+        let service = Rc::new(RefCell::new(Service::new(cri)));
 
         assert!(!column.is_row_filled(Row::IdentityFraud));
-        column.add_cri(&Rc::new(cri));
+        column.add_service(service);
         assert!(column.is_row_filled(Row::IdentityFraud));
 
         let mut cri = create_cri_with_no_scores();
         cri.scores.verification = Some(VerificationScore::random_choice());
+        let service = Rc::new(RefCell::new(Service::new(cri)));
 
         assert!(!column.is_row_filled(Row::Verification));
-        column.add_cri(&Rc::new(cri));
+        column.add_service(service);
         assert!(column.is_row_filled(Row::Verification));
 
         let cri = create_cri_with_no_scores();
+        let service = Rc::new(RefCell::new(Service::new(cri)));
 
         assert!(!column.is_row_filled(Row::Other));
-        column.add_cri(&Rc::new(cri));
+        column.add_service(service);
         assert!(column.is_row_filled(Row::Other));
     }
 
@@ -220,31 +271,31 @@ mod tests {
         let mut strength_and_validity = create_cri_with_no_scores();
         strength_and_validity.scores.strength = Some(StrengthScore::random_choice());
         strength_and_validity.scores.validity = Some(ValidityScore::random_choice());
-        let strength_and_validity = Rc::new(strength_and_validity);
+        let strength_and_validity = Rc::new(RefCell::new(Service::new(strength_and_validity)));
 
         let mut identity_fraud = create_cri_with_no_scores();
         identity_fraud.scores.identity_fraud = Some(IdentityFraudScore::random_choice());
-        let identity_fraud = Rc::new(identity_fraud);
+        let identity_fraud = Rc::new(RefCell::new(Service::new(identity_fraud)));
 
         let other = create_cri_with_no_scores();
-        let other = Rc::new(other);
+        let other = Rc::new(RefCell::new(Service::new(other)));
 
         let mut column = Column::default();
-        column.add_cri(&strength_and_validity);
-        column.add_cri(&identity_fraud);
-        column.add_cri(&other);
+        column.add_service(strength_and_validity.clone());
+        column.add_service(identity_fraud.clone());
+        column.add_service(other.clone());
 
         assert_eq!(
             column.get_row(Row::Strength),
             RowContent::StartOfCri {
-                service: Service::new(strength_and_validity.clone()),
+                service: strength_and_validity.borrow(),
                 rowspan: 2
             }
         );
         assert_eq!(
             column.get_row(Row::Validity),
             RowContent::ContinuationOfCri {
-                service: strength_and_validity.into()
+                service: strength_and_validity.borrow()
             }
         );
 
@@ -253,14 +304,14 @@ mod tests {
         assert_eq!(
             column.get_row(Row::IdentityFraud),
             RowContent::StartOfCri {
-                service: Service::new(identity_fraud),
+                service: identity_fraud.borrow(),
                 rowspan: 1
             }
         );
         assert_eq!(
             column.get_row(Row::Other),
             RowContent::StartOfCri {
-                service: Service::new(other),
+                service: other.borrow(),
                 rowspan: 1
             }
         );
