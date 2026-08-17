@@ -7,6 +7,7 @@ pub enum Owner {
     Lime,
     Orange,
     Other,
+    Mobile,
 }
 
 impl fmt::Display for Owner {
@@ -15,6 +16,7 @@ impl fmt::Display for Owner {
             Self::Kiwi => write!(f, "Kiwi"),
             Self::Lime => write!(f, "Lime"),
             Self::Orange => write!(f, "Orange"),
+            Self::Mobile => write!(f, "Mobile"),
             Self::Other => write!(f, "Other"),
         }
     }
