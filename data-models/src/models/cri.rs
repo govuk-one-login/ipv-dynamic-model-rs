@@ -43,7 +43,7 @@ impl HasScores for Cri {
     }
 }
 
-#[cfg(test)]
+#[cfg(feature = "test-utils")]
 pub mod tests_utils {
     use super::*;
     use crate::models::owner::Owner;

@@ -1,5 +1,5 @@
-use crate::prelude::*;
 use core::fmt;
+use data_models::prelude::*;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Row {
@@ -45,11 +45,7 @@ impl fmt::Display for Row {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::score::{
-        ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore, VerificationScore,
-    };
-    use crate::models::scores::Scores;
-    use crate::test_utils::{CreateTestSubject, RandomChoice};
+    use data_models::test_utils::{CreateTestSubject, RandomChoice};
 
     fn create_cri_with_no_scores() -> Cri {
         let mut cri = Cri::create_test_subject();

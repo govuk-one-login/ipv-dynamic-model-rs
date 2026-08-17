@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Hash)]
 pub enum UserRequirement {
     #[serde(rename = "UK Passport")]
     UkPassport,
@@ -28,11 +28,29 @@ pub enum UserRequirement {
     Any(Vec<Self>),
 }
 
-#[cfg(test)]
-mod random_choice {
+impl UserRequirement {
+    #[must_use]
+    pub const fn all_valid_individual_requirements() -> [Self; 10] {
+        [
+            Self::UkPassport,
+            Self::ICAO9303,
+            Self::InternationalPassport,
+            Self::UkDrivingLicense,
+            Self::BankAccount,
+            Self::BRPDocument,
+            Self::NationalInsuranceNumber,
+            Self::CreditHistory,
+            Self::BenefitsHistory,
+            Self::SmartPhone,
+        ]
+    }
+}
+
+#[cfg(feature = "test-utils")]
+pub mod test_utils {
     use super::*;
     use crate::test_utils::{RandomChoice, random_vec};
-    use rand::prelude::*;
+    use rand::prelude::IndexedRandom;
 
     impl RandomChoice for UserRequirement {
         fn random_choice() -> Self {

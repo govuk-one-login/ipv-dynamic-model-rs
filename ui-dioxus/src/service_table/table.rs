@@ -1,5 +1,5 @@
 use crate::service_table::row::ServiceRow;
-use data_models::prelude::*;
+use crate::table_data::column::Column;
 use dioxus::prelude::*;
 
 #[component]

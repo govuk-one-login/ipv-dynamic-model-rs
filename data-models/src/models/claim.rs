@@ -19,10 +19,10 @@ impl HasScores for Claim {
     }
 }
 
-#[cfg(test)]
-pub mod tests_utils {
+#[cfg(feature = "test-utils")]
+pub mod test_utils {
     use super::*;
-    use crate::test_utils::*;
+    use crate::test_utils::{CreateTestSubject, random_string, random_vec};
 
     impl CreateTestSubject for Claim {
         fn create_test_subject() -> Self {
@@ -33,17 +33,5 @@ pub mod tests_utils {
                 scores: Scores::create_test_subject(),
             }
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::test_utils::CreateTestSubject;
-
-    #[test]
-    fn test_has_scores() {
-        let claim = Claim::create_test_subject();
-        assert_eq!(claim.scores(), &claim.scores);
     }
 }

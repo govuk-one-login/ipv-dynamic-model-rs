@@ -6,8 +6,8 @@ pub struct Attribute {
     pub description: String,
 }
 
-#[cfg(test)]
-pub mod tests_utils {
+#[cfg(feature = "test-utils")]
+pub mod test_utils {
     use super::*;
     use crate::test_utils::{CreateTestSubject, random_string};
 

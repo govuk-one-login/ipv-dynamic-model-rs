@@ -98,8 +98,8 @@ impl Deref for RequestsPerSecond {
     }
 }
 
-#[cfg(test)]
-mod test_utils {
+#[cfg(feature = "test-utils")]
+pub mod test_utils {
     use crate::prelude::RequestsPerSecond;
     use crate::test_utils::CreateTestSubject;
     use rand::random_range;

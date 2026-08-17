@@ -1,5 +1,4 @@
-use crate::models::requests_per_second::RequestsPerSecond;
-use crate::prelude::Cri;
+use crate::prelude::*;
 use core::fmt;
 use core::ops::Deref;
 
@@ -26,9 +25,9 @@ impl fmt::Display for ServiceStatus {
 /// service on/off, simulate traffic, etc.
 #[derive(Debug, Clone)]
 pub struct Service {
-    cri: Cri,
-    active: bool,
-    traffic: RequestsPerSecond,
+    pub cri: Cri,
+    pub active: bool,
+    pub traffic: RequestsPerSecond,
 }
 
 impl Service {
@@ -42,8 +41,19 @@ impl Service {
     }
 
     /// Lets you turn the service on of off
-    pub const fn set_active(&mut self, active: bool) {
-        self.active = active;
+    #[must_use]
+    pub const fn get_active(&self) -> bool {
+        self.active
+    }
+
+    /// Turn the service on
+    pub const fn turn_on(&mut self) {
+        self.active = true;
+    }
+
+    /// Turn the service off
+    pub const fn turn_off(&mut self) {
+        self.active = false;
     }
 
     /// Set the amount of traffic flowing to the service, returns the remaining capacity
@@ -114,6 +124,22 @@ impl From<Cri> for Service {
     }
 }
 
+#[cfg(feature = "test-utils")]
+pub mod test_utils {
+    use super::*;
+    use crate::test_utils::CreateTestSubject;
+
+    impl CreateTestSubject for Service {
+        fn create_test_subject() -> Self {
+            Self {
+                cri: Cri::create_test_subject(),
+                active: true,
+                traffic: RequestsPerSecond::create_test_subject(),
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -135,9 +161,11 @@ mod tests {
         let cri = Cri::create_test_subject();
         let mut service = Service::new(cri.clone());
 
-        assert_eq!(service.active, true);
-        service.set_active(false);
-        assert_eq!(service.active, false);
+        assert_eq!(service.get_active(), true);
+        service.turn_off();
+        assert_eq!(service.get_active(), false);
+        service.turn_on();
+        assert_eq!(service.get_active(), true);
     }
 
     #[test]
@@ -161,7 +189,7 @@ mod tests {
         service.set_traffic(RequestsPerSecond::new(1000.0).unwrap());
         assert_eq!(service.get_status(), ServiceStatus::Degraded);
 
-        service.set_active(false);
+        service.turn_off();
         assert_eq!(service.get_status(), ServiceStatus::Off);
     }
 }

@@ -45,3 +45,24 @@
     }
   }
 }
+
+.main {
+  display: flex;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+
+  &.system {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    input[type=checkbox] {
+      opacity: 0;
+    }
+  }
+}

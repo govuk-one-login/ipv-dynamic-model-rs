@@ -22,7 +22,7 @@ impl fmt::Display for Owner {
     }
 }
 
-#[cfg(test)]
+#[cfg(feature = "test-utils")]
 mod tests_utils {
     use super::*;
     use crate::test_utils::RandomChoice;

@@ -845,7 +845,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4583a4551df46e2792f82ceeac45e850d2e2d5debba0b91f102385cda5b11f06"
 
 [[package]]
-name = "data_models"
+name = "data-models"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -5471,8 +5471,9 @@ checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
 name = "ui-dioxus"
 version = "0.1.0"
 dependencies = [
- "data_models",
+ "data-models",
  "dioxus",
+ "rand 0.10.2",
  "serde",
  "yaml_serde",
 ]
