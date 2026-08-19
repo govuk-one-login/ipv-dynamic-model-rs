@@ -15,19 +15,6 @@ pub enum RowContent {
     Empty,
 }
 
-#[cfg(test)]
-impl RowContent {
-    #[must_use]
-    pub fn get_service(&self) -> Option<Signal<Service>> {
-        match self {
-            Self::StartOfCri { service, .. } | Self::ContinuationOfCri { service } => {
-                Some(*service)
-            }
-            Self::Empty => None,
-        }
-    }
-}
-
 #[derive(Debug, Clone, Default)]
 pub struct Column {
     pub strength: Option<Signal<Service>>,
