@@ -6,18 +6,18 @@ pub enum Owner {
     Kiwi,
     Lime,
     Orange,
-    Other,
+    External,
     Mobile,
 }
 
 impl fmt::Display for Owner {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Kiwi => write!(f, "Kiwi"),
-            Self::Lime => write!(f, "Lime"),
-            Self::Orange => write!(f, "Orange"),
-            Self::Mobile => write!(f, "Mobile"),
-            Self::Other => write!(f, "Other"),
+            Self::Kiwi => write!(f, "kiwi"),
+            Self::Lime => write!(f, "lime"),
+            Self::Orange => write!(f, "orange"),
+            Self::Mobile => write!(f, "mobile"),
+            Self::External => write!(f, "external"),
         }
     }
 }
@@ -29,7 +29,7 @@ mod tests_utils {
     use rand::prelude::*;
     impl RandomChoice for Owner {
         fn random_choice() -> Self {
-            let choices = [Self::Kiwi, Self::Lime, Self::Orange, Self::Other];
+            let choices = [Self::Kiwi, Self::Lime, Self::Orange, Self::External];
             *choices.choose(&mut rand::rng()).unwrap() // Safe as slice is not empty
         }
     }
