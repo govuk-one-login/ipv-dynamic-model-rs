@@ -69,7 +69,7 @@ impl HasScores for Scores {
 }
 
 #[cfg(feature = "test-utils")]
-pub mod tests_utils {
+pub mod test_utils {
     use super::*;
     use crate::test_utils::{CreateTestSubject, RandomChoice};
 

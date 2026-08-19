@@ -69,7 +69,7 @@ pub mod test_utils {
             let random_non_recursive = || {
                 non_recursive_choices
                     .choose(&mut rand::rng())
-                    .unwrap()
+                    .unwrap() // Safe as slice is not empty
                     .clone()
             };
 
@@ -87,7 +87,7 @@ pub mod test_utils {
                 Self::All(random_vec(2, 3, random_non_recursive)),
                 Self::Any(random_vec(2, 3, random_non_recursive)),
             ];
-            recursive_choices.choose(&mut rand::rng()).unwrap().clone()
+            recursive_choices.choose(&mut rand::rng()).unwrap().clone() // Safe as slice is not empty
         }
     }
 }

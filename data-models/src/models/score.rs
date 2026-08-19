@@ -46,7 +46,7 @@ pub enum VerificationScore {
 }
 
 #[cfg(feature = "test-utils")]
-mod tests_utils {
+mod test_utils {
     use super::*;
     use crate::test_utils::RandomChoice;
     use rand::prelude::*;

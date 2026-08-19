@@ -44,7 +44,7 @@ impl HasScores for Cri {
 }
 
 #[cfg(feature = "test-utils")]
-pub mod tests_utils {
+pub mod test_utils {
     use super::*;
     use crate::models::owner::Owner;
     use crate::test_utils::{CreateTestSubject, RandomChoice, random_string, random_vec};

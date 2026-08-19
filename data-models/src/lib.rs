@@ -1,8 +1,8 @@
 pub mod identity;
 pub mod models;
-pub mod users;
 #[cfg(feature = "test-utils")]
 pub mod test_utils;
+pub mod users;
 
 pub mod prelude {
     pub use super::identity::{identity_profile::IdentityProfile, known_profiles::*};
