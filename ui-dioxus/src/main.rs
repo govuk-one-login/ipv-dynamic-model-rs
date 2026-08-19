@@ -13,8 +13,7 @@ use serde::Deserialize;
 use std::fs::File;
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-const SERVICE_TABLE_CSS: Asset = asset!("/assets/service_table.scss");
+const MAIN_CSS: Asset = asset!("/assets/main.scss");
 
 fn main() {
     launch(App);
@@ -55,7 +54,6 @@ fn App() -> Element {
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
-        document::Link { rel: "stylesheet", href: SERVICE_TABLE_CSS }
         Hero {}
         MainBody {}
         SuccessRate { success_rate: 0.4 }

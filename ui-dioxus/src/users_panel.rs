@@ -1,6 +1,13 @@
 use data_models::prelude::*;
 use dioxus::prelude::*;
 
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
+pub struct UsersConfig {
+    rps: RequestsPerSecond,
+    passport: Proportion,
+    driving_license: Proportion,
+}
+
 #[component]
 pub fn UsersPanel() -> Element {
     let mut rps_value = use_signal(|| 0.0);

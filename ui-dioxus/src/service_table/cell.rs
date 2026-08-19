@@ -14,8 +14,8 @@ pub fn ServiceCell(row_content: Signal<RowContent>) -> Element {
                     class: "{s.get_status()} {s.owner}",
                     rowspan,
                     label {
-                        class: "system",
-                        "{s.name}"
+                        class: "system toggle",
+                        p { "{s.name}" }
 
                         input {
                             r#type: "checkbox",
@@ -28,6 +28,8 @@ pub fn ServiceCell(row_content: Signal<RowContent>) -> Element {
                                 }
                             }
                         }
+
+                        span {}
                     }
                 }
             }
