@@ -22,5 +22,6 @@ dx serve
 
 To run for a different platform, use the `--platform platform` flag. E.g.
 ```bash
-dx serve --platform desktop
+dx serve --platform desktop # current default
+dx serve --platform web # currently unsupported due to file read (need to make this runtime load)
 ```
