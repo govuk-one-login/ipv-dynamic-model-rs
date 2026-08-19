@@ -1,0 +1,15 @@
+[package]
+name = "data-models"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+rand = { workspace = true, optional = true }
+serde = { workspace = true, features = ["derive"] }
+serde_repr = "0.1.21"
+thiserror = { workspace = true }
+yaml_serde = { workspace = true }
+
+[features]
+test-utils = ["dep:rand"]

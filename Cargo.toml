@@ -1,13 +1,14 @@
-[package]
-name = "ipv-dynamic-model-rs"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+resolver = "3"
+members = [
+    "data-models",
+    "ui-dioxus",
+]
 
-[dependencies]
+[workspace.dependencies]
 anyhow = "1.0.104"
-serde = { version = "1.0.229", features = ["derive"] }
+data-models = { path = "data-models" }
+rand = "0.10.2"
+serde = { version = "1.0.229" }
+thiserror = "2.0.19"
 yaml_serde = "0.10.4"
-serde_repr = "0.1.21"
-
-[dev-dependencies]
-rand = { version = "0.10.2", features = ["thread_rng"] }

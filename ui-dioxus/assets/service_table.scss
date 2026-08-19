@@ -1,0 +1,64 @@
+.service-table {
+  td, th {
+    height: 100px;
+    width: 100px;
+    text-align: center;
+    padding: 5px;
+  }
+
+  td {
+    &.good {
+      border: 5px solid green;
+    }
+
+    &.degraded {
+      border: 5px dashed orange;
+    }
+
+    &.off {
+      border: 5px solid red;
+    }
+
+    &.orange {
+      background: darkorange;
+    }
+
+    &.kiwi {
+      background: saddlebrown;
+    }
+
+    &.lime {
+      background: darkgreen;
+    }
+
+    &.mobile {
+      background: darkblue;
+    }
+
+    &.external {
+      background: pink;
+      color: black;
+    }
+
+    &.not-usable {
+      opacity: 50%;
+    }
+  }
+}
+
+.main {
+  display: flex;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+
+  &.system {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
