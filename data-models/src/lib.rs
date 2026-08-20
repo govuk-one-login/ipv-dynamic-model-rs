@@ -20,9 +20,7 @@ pub mod prelude {
         service::Service,
         user_requirement::UserRequirement,
     };
-    pub use super::user_journey::{
-        proportion::{Proportion, SaturatingProportion},
-    };
+    pub use super::user_journey::proportion::{Proportion, SaturatingProportion};
     pub use crate::models::service_status::ServiceStatus;
     pub use crate::user_journey::users::Users;
 }

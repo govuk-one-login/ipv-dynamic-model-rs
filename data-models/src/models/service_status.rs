@@ -6,9 +6,12 @@ use std::fmt;
 /// - If the system's up but at or over capacity it's considered [`ServiceStatus::Degraded`]
 /// - If the system's down you'll get [`ServiceStatus::Off`]
 ///
-/// Note, two degraded systems may not be exactly equivalent, so the type implements PartialEq but
-/// not Eq
-#[allow(clippy::derive_partial_eq_without_eq)]
+/// Note, two degraded systems may not be exactly equivalent, so the type implements [`PartialEq`]
+/// but not [`Eq`]
+#[allow(
+    clippy::derive_partial_eq_without_eq,
+    reason = "Two degraded systems are not be exactly equivalent"
+)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum ServiceStatus {
     Good,

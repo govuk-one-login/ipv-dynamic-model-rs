@@ -1,4 +1,4 @@
-use crate::models::score_type::ScoreType;
+use crate::identity::Confidence;
 use crate::prelude::*;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -9,11 +9,12 @@ pub enum JourneyStep {
 }
 
 impl JourneyStep {
-    pub fn get_service(&self) -> &Service {
+    #[must_use]
+    pub const fn get_service(&self) -> &Service {
         match self {
-            JourneyStep::Success(_, service) => service,
-            JourneyStep::CouldNotUse(_, service) => service,
-            JourneyStep::Failure(_, service) => service,
+            Self::Success(_, service)
+            | Self::CouldNotUse(_, service)
+            | Self::Failure(_, service) => service,
         }
     }
 }
@@ -41,19 +42,23 @@ impl Journey {
         todo!()
     }
 
+    #[must_use]
     pub fn get_visited_services(&self) -> Vec<&Service> {
-        self.0.iter().map(|step| step.get_service()).collect()
+        self.0.iter().map(JourneyStep::get_service).collect()
     }
 }
 
-/// A `Journeys` represents all Journeys a group of user_journey could take through the system
-#[derive(Debug, Default, Clone, PartialEq)]
-pub struct Journeys(Vec<Journey>);
+/// A `Journeys` represents all Journeys a group of users could take through the system
+#[derive(Debug, Clone, PartialEq)]
+pub struct Journeys {
+    journeys: Vec<Journey>,
+    goal: Confidence,
+}
 
 impl Journeys {
     #[must_use]
     pub fn is_complete(&self) -> bool {
-        self.0.iter().all(|j| j.completed_status().is_some())
+        self.journeys.iter().all(|j| j.completed_status().is_some())
     }
 
     #[must_use]

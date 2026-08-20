@@ -7,14 +7,14 @@ pub enum ProportionError {
     InvalidProportion(f64),
 }
 
-/// Represents a proportion of the total number of user_journey between 0.0 and 1.0 inclusive.
+/// Represents a proportion of the total number of users between 0.0 and 1.0 inclusive.
 ///
 /// To create a proportion both safely and accurately, you can use [`TryFrom`] on a float.
 ///
 /// ```
 /// use data_models::prelude::*;
 ///
-/// assert!(Proportion::try_from(0.5).is_ok()); // Representing 50% of user_journey
+/// assert!(Proportion::try_from(0.5).is_ok()); // Representing 50% of user
 /// assert!(Proportion::try_from(-1.0).is_err()); // Would represent -100% which makes no sense
 /// ```
 ///
@@ -24,7 +24,7 @@ pub enum ProportionError {
 /// ```
 /// use data_models::prelude::*;
 ///
-/// assert_eq!(0.5.to_saturated_proportion(), 0.5); // Representing 50% of user_journey
+/// assert_eq!(0.5.to_saturated_proportion(), 0.5); // Representing 50% of users
 /// assert_eq!((-1.0).to_saturated_proportion(), 0.0); // Less than zero saturates to zero
 /// assert_eq!(1.1.to_saturated_proportion(), 1.0); // More than one saturates to one
 /// ```
@@ -91,7 +91,7 @@ impl SaturatingProportion for f64 {
 
 impl SaturatingProportion for f32 {
     fn to_saturated_proportion(self) -> Proportion {
-        Proportion((self as f64).clamp(0.0, 1.0))
+        Proportion(f64::from(self).clamp(0.0, 1.0))
     }
 }
 

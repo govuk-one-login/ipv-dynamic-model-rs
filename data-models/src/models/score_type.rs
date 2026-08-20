@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[repr(u8)]
 pub enum ScoreType {
     Strength,
@@ -27,6 +27,11 @@ impl ScoreType {
         ]
     }
 
+    #[allow(
+        clippy::missing_panics_doc,
+        reason = "All scores types appear in order_of_score_importance(), so panic never happens"
+    )]
+    #[must_use]
     pub fn compare_importance_with(self, other: Self) -> Ordering {
         let order = Self::order_of_score_importance();
 

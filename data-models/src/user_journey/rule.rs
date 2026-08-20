@@ -1,7 +1,7 @@
 use crate::prelude::{HasScores, Service};
 use crate::user_journey::journey::Journey;
 
-/// A JourneyRule will examine the journey a user has been on and adjust the possible
+/// A [`JourneyRule`] will examine the journey a user has been on and adjust the possible
 /// services accordingly. If no services are returned, it should be considered a failed
 /// journey.
 ///
@@ -17,7 +17,7 @@ pub const REMOVE_VISITED: JourneyRule = |journey, services| {
     services
         .iter()
         .copied()
-        .filter(|s| !visited.contains(&s))
+        .filter(|s| !visited.contains(s))
         .collect()
 };
 
@@ -27,16 +27,16 @@ pub const REMOVE_DOWN_SERVICES: JourneyRule =
 
 /// Push any service that is degraded to the back
 pub const SORT_BY_REMAINING_CAPACITY: JourneyRule = |_journey, services| {
-    let mut services: Vec<_> = services.iter().copied().collect();
+    let mut services: Vec<_> = services.to_vec();
     services.sort_by(|left, right| {
-        f64::total_cmp(&*left.remaining_capacity(), &*right.remaining_capacity())
+        f64::total_cmp(&left.remaining_capacity(), &right.remaining_capacity())
     });
     services
 };
 
 /// Looks at which score is most important and largest
 pub const SORT_BY_SCORE_IMPORTANCE: JourneyRule = |_journey, services| {
-    let mut services: Vec<_> = services.iter().copied().collect();
+    let mut services: Vec<_> = services.to_vec();
     services.sort_by(|left, right| left.compare_score_types_and_scores(*right));
     services
 };
