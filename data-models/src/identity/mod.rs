@@ -3,6 +3,7 @@ use crate::prelude::Claim;
 pub mod identity_profile;
 pub mod known_profiles;
 
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum Confidence {
     P1,
     P2,

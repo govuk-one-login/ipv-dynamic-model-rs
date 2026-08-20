@@ -110,7 +110,7 @@ pub const M2C: IdentityProfile = IdentityProfile(
 );
 
 /// Medium confidence, 3 pieces of evidence, profile A (M3A)
-pub const M3C: IdentityProfile = IdentityProfile(
+pub const M3A: IdentityProfile = IdentityProfile(
     Scores {
         strength: Some(StrengthScore::Two),
         validity: Some(ValidityScore::Two),
