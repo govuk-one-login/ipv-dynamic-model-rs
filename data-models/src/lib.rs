@@ -2,7 +2,7 @@ pub mod identity;
 pub mod models;
 #[cfg(feature = "test-utils")]
 pub mod test_utils;
-pub mod users;
+pub mod user_journey;
 
 pub mod prelude {
     pub use super::identity::{identity_profile::IdentityProfile, known_profiles::*};
@@ -17,11 +17,12 @@ pub mod prelude {
             VerificationScore,
         },
         scores::{HasScores, Scores},
-        service::{Service, ServiceStatus},
+        service::Service,
         user_requirement::UserRequirement,
     };
-    pub use super::users::{
-        Users,
+    pub use super::user_journey::{
         proportion::{Proportion, SaturatingProportion},
     };
+    pub use crate::models::service_status::ServiceStatus;
+    pub use crate::user_journey::users::Users;
 }

@@ -1,7 +1,7 @@
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq, Eq)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, Ord, PartialEq, Eq)]
 pub enum StrengthScore {
     One = 1,
     Two = 2,
@@ -10,7 +10,7 @@ pub enum StrengthScore {
 }
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq, Eq)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, Ord, PartialEq, Eq)]
 pub enum ValidityScore {
     One = 1,
     Two = 2,
@@ -19,7 +19,7 @@ pub enum ValidityScore {
 }
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq, Eq)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, Ord, PartialEq, Eq)]
 pub enum ActivityHistoryScore {
     One = 1,
     Two = 2,
@@ -28,7 +28,7 @@ pub enum ActivityHistoryScore {
 }
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq, Eq)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, Ord, PartialEq, Eq)]
 pub enum IdentityFraudScore {
     Zero = 0,
     One = 1,
@@ -37,7 +37,7 @@ pub enum IdentityFraudScore {
 }
 
 #[repr(u8)]
-#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, PartialEq, Eq)]
+#[derive(Serialize_repr, Deserialize_repr, Debug, Copy, Clone, PartialOrd, Ord, PartialEq, Eq)]
 pub enum VerificationScore {
     One = 1,
     Two = 2,

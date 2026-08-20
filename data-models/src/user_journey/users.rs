@@ -1,11 +1,7 @@
-use crate::prelude::{RequestsPerSecond, UserRequirement};
-use proportion::Proportion;
+use crate::prelude::{Proportion, RequestsPerSecond, UserRequirement};
 use std::collections::HashMap;
 
-pub mod journey;
-pub mod proportion;
-
-#[derive(Default)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub struct Users {
     requests_per_second: RequestsPerSecond,
     requirements: HashMap<UserRequirement, Proportion>,

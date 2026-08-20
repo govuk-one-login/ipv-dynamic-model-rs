@@ -7,28 +7,69 @@ pub enum ProportionError {
     InvalidProportion(f64),
 }
 
-/// Represents a proportion of the total number of users between 0.0 and 1.0 inclusive
+/// Represents a proportion of the total number of user_journey between 0.0 and 1.0 inclusive.
+///
+/// To create a proportion both safely and accurately, you can use [`TryFrom`] on a float.
 ///
 /// ```
 /// use data_models::prelude::*;
 ///
-/// assert!(Proportion::try_from(0.5).is_ok()); // Representing 50% of users
+/// assert!(Proportion::try_from(0.5).is_ok()); // Representing 50% of user_journey
 /// assert!(Proportion::try_from(-1.0).is_err()); // Would represent -100% which makes no sense
+/// ```
+///
+/// You can also create a saturated proportion if you're ok with your proportion potentially not
+/// being exactly representative of the number you started with
+///
+/// ```
+/// use data_models::prelude::*;
+///
+/// assert_eq!(0.5.to_saturated_proportion(), 0.5); // Representing 50% of user_journey
+/// assert_eq!((-1.0).to_saturated_proportion(), 0.0); // Less than zero saturates to zero
+/// assert_eq!(1.1.to_saturated_proportion(), 1.0); // More than one saturates to one
 /// ```
 #[derive(Copy, Clone, Debug, Default, PartialEq)]
 pub struct Proportion(f64);
 
 impl Proportion {
+    /// Safe constructor to create a proportion of 0%
+    /// ```
+    /// use data_models::prelude::*;
+    ///
+    /// assert_eq!(Proportion::none(), 0.0);
+    /// ```
     #[must_use]
     pub const fn none() -> Self {
         Self(0.0)
     }
 
+    /// Safe constructor to create a proportion of 100%
+    /// ```
+    /// use data_models::prelude::*;
+    ///
+    /// assert_eq!(Proportion::all(), 1.0);
+    /// ```
     #[must_use]
     pub const fn all() -> Self {
         Self(1.0)
     }
 
+    /// Lets you split a proportion by another proportion. The first will be the proportion you
+    /// ```
+    /// use data_models::prelude::*;
+    ///
+    /// # let approximately_eq_f64 = |left: f64, right: f64| (left - right).abs() < 0.00001;
+    /// #
+    /// let p1 = 0.50.to_saturated_proportion();
+    /// let (left, right) = p1.split(0.80.to_saturated_proportion());
+    /// assert!(approximately_eq_f64(*left, 0.4));
+    /// assert!(approximately_eq_f64(*right, 0.1));
+    ///
+    /// // The returned values are also `Proportion`s so can be split further.
+    /// let (left2, right2) = left.split(0.25.to_saturated_proportion());
+    /// assert!(approximately_eq_f64(*left, 0.4));
+    /// assert!(approximately_eq_f64(*right, 0.1));
+    /// ```
     #[must_use]
     pub fn split(self, proportion: Self) -> (Self, Self) {
         (
@@ -45,6 +86,12 @@ pub trait SaturatingProportion {
 impl SaturatingProportion for f64 {
     fn to_saturated_proportion(self) -> Proportion {
         Proportion(self.clamp(0.0, 1.0))
+    }
+}
+
+impl SaturatingProportion for f32 {
+    fn to_saturated_proportion(self) -> Proportion {
+        Proportion((self as f64).clamp(0.0, 1.0))
     }
 }
 
