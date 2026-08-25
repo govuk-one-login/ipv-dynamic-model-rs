@@ -40,3 +40,32 @@ pub const SORT_BY_SCORE_IMPORTANCE: JourneyRule = |_journey, services| {
     services.sort_by(|left, right| left.compare_score_types_and_scores(*right));
     services
 };
+
+/// Filters out any service not part of CI mitigation for an existing CI
+pub const CI_FILTER: JourneyRule = |journey, services| {
+    let cis = journey.get_unmitigated_cis();
+
+    // If the user has no CIs, the full service list can be returned
+    if cis.is_empty() {
+        return services.to_vec();
+    }
+
+    // If any CIs can not be mitigated, return no services
+    'ci: for ci in &cis {
+        for service in services {
+            if service.can_mitigate_ci(ci) {
+                // The service can be mitigated we can move on
+                continue 'ci;
+            }
+        }
+        // If a ci can not be mitigated by any CI we give up
+        return vec![];
+    }
+
+    // Otherwise return the services that can mitigate any of the current CIs
+    services
+        .iter()
+        .copied()
+        .filter(|service| service.can_mitigate_any_of_ci(&cis))
+        .collect()
+};

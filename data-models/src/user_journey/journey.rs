@@ -1,4 +1,4 @@
-use crate::identity::Confidence;
+use crate::identity::Proofing;
 use crate::prelude::*;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -17,6 +17,14 @@ impl JourneyStep {
             | Self::Failure(_, service) => service,
         }
     }
+    #[must_use]
+    pub const fn get_users(&self) -> &Users {
+        match self {
+            Self::Success(users, _) | Self::CouldNotUse(users, _) | Self::Failure(users, _) => {
+                users
+            }
+        }
+    }
 }
 
 pub enum CompletedStatus {
@@ -25,14 +33,25 @@ pub enum CompletedStatus {
 }
 
 /// A `Journey` represents a single path that a user is taking through the system
-#[derive(Debug, Default, Clone, PartialEq)]
-pub struct Journey(Vec<JourneyStep>);
+#[derive(Debug, Clone, PartialEq)]
+pub struct Journey {
+    journeys: Vec<JourneyStep>,
+    goal: Proofing,
+}
 
 impl Journey {
+    #[must_use]
+    pub fn new(goal: Proofing) -> Self {
+        Self {
+            journeys: Vec::with_capacity(20), // Cheating a bit but this number should be more than the most steps they can take
+            goal,
+        }
+    }
+
     /// Is the individual service complete
     #[must_use]
     pub fn completed_status(&self) -> Option<CompletedStatus> {
-        if let JourneyStep::Failure(users, _) = self.0.last()? {
+        if let JourneyStep::Failure(users, _) = self.journeys.last()? {
             return Some(CompletedStatus::Failure(users.clone()));
         }
         todo!()
@@ -44,7 +63,14 @@ impl Journey {
 
     #[must_use]
     pub fn get_visited_services(&self) -> Vec<&Service> {
-        self.0.iter().map(JourneyStep::get_service).collect()
+        self.journeys.iter().map(JourneyStep::get_service).collect()
+    }
+
+    #[must_use]
+    pub fn get_unmitigated_cis(&self) -> Vec<&String> {
+        self.journeys
+            .last()
+            .map_or_else(Vec::new, |step| step.get_users().get_unmitigated_cis())
     }
 }
 
@@ -52,7 +78,7 @@ impl Journey {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Journeys {
     journeys: Vec<Journey>,
-    goal: Confidence,
+    goal: Proofing,
 }
 
 impl Journeys {
