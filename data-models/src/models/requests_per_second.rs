@@ -1,5 +1,6 @@
+use crate::prelude::Proportion;
 use serde::{Deserialize, Serialize};
-use std::ops::Deref;
+use std::ops::{Deref, Mul};
 use thiserror::Error;
 
 #[derive(Copy, Clone, Debug, Error)]
@@ -95,6 +96,15 @@ impl Deref for RequestsPerSecond {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl Mul<Proportion> for RequestsPerSecond {
+    type Output = Self;
+
+    fn mul(self, rhs: Proportion) -> Self::Output {
+        // Proportions are guaranteed to be non-negative so we don't need to check this
+        Self(self.0 * *rhs)
     }
 }
 

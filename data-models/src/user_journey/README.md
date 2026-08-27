@@ -59,3 +59,7 @@ How to find which service is next
    > If none: journey has failed
 6. Apply weighting to missing score types: strength > validity > verification > identity fraud > activity history
 7. Apply weight for service status (i.e. prefer stable over degraded)
+
+---
+
+Need to check if there is a pre-requisite claim (eg, address) in which case the user needs routing there first

@@ -28,7 +28,7 @@ impl JourneyStep {
 }
 
 pub enum CompletedStatus {
-    Success(Users, IdentityProfile),
+    Success(Users, KnownIdentityProfile),
     Failure(Users),
 }
 

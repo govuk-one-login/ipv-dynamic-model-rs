@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::ops::{Deref, Mul};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -61,21 +61,31 @@ impl Proportion {
     /// # let approximately_eq_f64 = |left: f64, right: f64| (left - right).abs() < 0.00001;
     /// #
     /// let p1 = 0.50.to_saturated_proportion();
-    /// let (left, right) = p1.split(0.80.to_saturated_proportion());
+    /// let (left, right) = p1.split_by(0.80.to_saturated_proportion());
     /// assert!(approximately_eq_f64(*left, 0.4));
     /// assert!(approximately_eq_f64(*right, 0.1));
     ///
     /// // The returned values are also `Proportion`s so can be split further.
-    /// let (left2, right2) = left.split(0.25.to_saturated_proportion());
+    /// let (left2, right2) = left.split_by(0.25.to_saturated_proportion());
     /// assert!(approximately_eq_f64(*left, 0.4));
     /// assert!(approximately_eq_f64(*right, 0.1));
     /// ```
     #[must_use]
-    pub fn split(self, proportion: Self) -> (Self, Self) {
+    pub fn split_by(self, proportion: Self) -> (Self, Self) {
         (
             Self(self.0 * proportion.0),
             Self(self.0 * (1.0 - proportion.0)),
         )
+    }
+
+    #[must_use]
+    pub fn invert(self) -> Self {
+        Self(1.0 - self.0)
+    }
+
+    #[must_use]
+    pub fn split<M: Mul<Self> + Copy>(self, amount: M) -> (M::Output, M::Output) {
+        (amount * self, amount * self.invert())
     }
 }
 
@@ -121,6 +131,14 @@ impl PartialEq<f64> for Proportion {
     }
 }
 
+impl Mul<Proportion> for f64 {
+    type Output = Self;
+
+    fn mul(self, rhs: Proportion) -> Self::Output {
+        self * *rhs
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -137,10 +155,19 @@ mod tests {
     }
 
     #[test]
-    fn test_split() {
+    fn test_split_by() {
         let p = 0.50.to_saturated_proportion();
-        let (left, right) = p.split(0.80.to_saturated_proportion());
+        let (left, right) = p.split_by(0.80.to_saturated_proportion());
         assert!(approximately_eq_f64(*left, 0.4));
         assert!(approximately_eq_f64(*right, 0.1));
+    }
+
+    #[test]
+    fn test_split() {
+        let input = 100.0;
+        let p = 0.80.to_saturated_proportion();
+        let (left, right) = p.split(input);
+        assert!(approximately_eq_f64(left, 80.0));
+        assert!(approximately_eq_f64(right, 20.0));
     }
 }

@@ -23,9 +23,9 @@ impl Users {
             .unwrap_or_default()
     }
 
-    pub fn set_requirement(&mut self, _requirement: &UserRequirement, _proportion: Proportion) {
-        todo!()
-        // self.requirements.entry(requirement)
+    /// Set a proportion of users who can match a particular requirement
+    pub fn set_requirement(&mut self, requirement: &UserRequirement, proportion: Proportion) {
+        self.requirements.insert(requirement.clone(), proportion);
     }
 
     /// Allows us to determine if there are too many contraindicators, even if they have been
@@ -42,5 +42,23 @@ impl Users {
             .iter()
             .filter(|ci| self.mitigated_cis.contains(ci))
             .collect()
+    }
+
+    /// Split the user pool by a specific requirement without changing any of the other proportions
+    #[must_use]
+    pub fn split_by(self, requirement: &UserRequirement) -> (Self, Self) {
+        let proportion = self.get_requirement(requirement);
+        let (left_rps, right_rps) = proportion.split(self.get_rps());
+
+        let mut left = self.clone();
+        let mut right = self;
+
+        left.requests_per_second = left_rps;
+        left.set_requirement(requirement, Proportion::all());
+
+        right.requests_per_second = right_rps;
+        left.set_requirement(requirement, Proportion::none());
+
+        (left, right)
     }
 }
