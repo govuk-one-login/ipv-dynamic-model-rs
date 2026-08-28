@@ -1,6 +1,6 @@
+use crate::identity::Proofing;
 use crate::prelude::*;
 use std::cmp::Ordering;
-use crate::identity::Proofing;
 
 #[derive(Default, Debug, Copy, Clone)]
 pub struct ProfileBuilder {
@@ -12,11 +12,6 @@ pub struct ProfileBuilder {
 }
 
 impl ProfileBuilder {
-    #[must_use]
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     #[must_use]
     pub fn is_at_least_as_strong_as(&self, other: &KnownIdentityProfile) -> bool {
         self.strength[0] >= other.1.strength
@@ -33,7 +28,10 @@ impl ProfileBuilder {
     #[must_use]
     pub fn to_known_profile(&self, minimum: Proofing) -> Option<KnownIdentityProfile> {
         let possible_profiles = KnownIdentityProfile::profiles_of(minimum);
-        possible_profiles.iter().find(|profile| self >= profile).copied()
+        possible_profiles
+            .iter()
+            .find(|profile| self >= profile)
+            .copied()
     }
 }
 
@@ -88,5 +86,9 @@ mod tests {
         };
         let profile = equal_to_known.to_known_profile(Proofing::P1);
         assert_eq!(profile, Some(M1C));
+
+        // Does not match higher proofing
+        let profile = equal_to_known.to_known_profile(Proofing::P3);
+        assert_eq!(profile, None);
     }
 }

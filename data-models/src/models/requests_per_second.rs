@@ -124,6 +124,7 @@ pub mod test_utils {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::prelude::SaturatingProportion;
 
     #[test]
     fn test_new() {
@@ -152,5 +153,13 @@ mod tests {
     fn test_deref() {
         let rps = RequestsPerSecond::new(50.0).unwrap();
         assert_eq!(*rps, 50.0);
+    }
+
+    #[test]
+    fn test_mul_proportion() {
+        let rps = RequestsPerSecond::new(50.0).unwrap();
+        let proportion = 0.4.to_saturated_proportion();
+
+        assert_eq!(rps * proportion, RequestsPerSecond::new(20.0).unwrap())
     }
 }
