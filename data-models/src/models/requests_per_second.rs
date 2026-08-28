@@ -1,5 +1,6 @@
+use crate::prelude::Proportion;
 use serde::{Deserialize, Serialize};
-use std::ops::Deref;
+use std::ops::{Deref, Mul};
 use thiserror::Error;
 
 #[derive(Copy, Clone, Debug, Error)]
@@ -98,6 +99,15 @@ impl Deref for RequestsPerSecond {
     }
 }
 
+impl Mul<Proportion> for RequestsPerSecond {
+    type Output = Self;
+
+    fn mul(self, rhs: Proportion) -> Self::Output {
+        // Proportions are guaranteed to be non-negative so we don't need to check this
+        Self(self.0 * *rhs)
+    }
+}
+
 #[cfg(feature = "test-utils")]
 pub mod test_utils {
     use crate::prelude::RequestsPerSecond;
@@ -113,6 +123,7 @@ pub mod test_utils {
 
 #[cfg(test)]
 mod tests {
+    use crate::prelude::SaturatingProportion;
     use super::*;
 
     #[test]
@@ -142,5 +153,13 @@ mod tests {
     fn test_deref() {
         let rps = RequestsPerSecond::new(50.0).unwrap();
         assert_eq!(*rps, 50.0);
+    }
+
+    #[test]
+    fn test_mul_proportion() {
+        let rps = RequestsPerSecond::new(50.0).unwrap();
+        let proportion = 0.4.to_saturated_proportion();
+
+        assert_eq!(rps * proportion, RequestsPerSecond::new(20.0).unwrap())
     }
 }

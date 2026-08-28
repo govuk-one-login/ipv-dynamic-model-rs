@@ -1,7 +1,9 @@
+use crate::identity::known_profile::IdentityProfileName;
 use crate::prelude::*;
 
 /// Low confidence, 1 piece of evidence, profile A (L1A)
-pub const L1A: IdentityProfile = IdentityProfile(
+pub const L1A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::L1A,
     Scores {
         strength: Some(StrengthScore::Two),
         validity: Some(ValidityScore::Two),
@@ -14,7 +16,8 @@ pub const L1A: IdentityProfile = IdentityProfile(
 );
 
 /// Low confidence, 1 piece of evidence, profile B (L1B)
-pub const L1B: IdentityProfile = IdentityProfile(
+pub const L1B: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::L1B,
     Scores {
         strength: Some(StrengthScore::Three),
         validity: Some(ValidityScore::Two),
@@ -27,7 +30,8 @@ pub const L1B: IdentityProfile = IdentityProfile(
 );
 
 /// Low confidence, 1 piece of evidence, profile C (L1C)
-pub const L1C: IdentityProfile = IdentityProfile(
+pub const L1C: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::L1C,
     Scores {
         strength: Some(StrengthScore::One),
         validity: Some(ValidityScore::One),
@@ -40,7 +44,8 @@ pub const L1C: IdentityProfile = IdentityProfile(
 );
 
 /// Low confidence, 2 pieces of evidence, profile A (L2A)
-pub const L2A: IdentityProfile = IdentityProfile(
+pub const L2A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::L2A,
     Scores {
         strength: Some(StrengthScore::One),
         validity: Some(ValidityScore::One),
@@ -59,7 +64,8 @@ pub const L2A: IdentityProfile = IdentityProfile(
 );
 
 /// Low confidence, 2 pieces of evidence, profile B (L2B)
-pub const L2B: IdentityProfile = IdentityProfile(
+pub const L2B: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::L2B,
     Scores {
         strength: Some(StrengthScore::One),
         validity: Some(ValidityScore::One),
@@ -78,7 +84,8 @@ pub const L2B: IdentityProfile = IdentityProfile(
 );
 
 /// Low confidence, 3 pieces of evidence, profile A (L3A)
-pub const L3A: IdentityProfile = IdentityProfile(
+pub const L3A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::L3A,
     Scores {
         strength: Some(StrengthScore::One),
         validity: Some(ValidityScore::One),

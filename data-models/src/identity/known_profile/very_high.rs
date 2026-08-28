@@ -1,7 +1,9 @@
+use crate::identity::known_profile::IdentityProfileName;
 use crate::prelude::*;
 
 /// Very high confidence, 1 piece of evidence, profile A (V1A)
-pub const V1A: IdentityProfile = IdentityProfile(
+pub const V1A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V1A,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Four),
@@ -14,7 +16,8 @@ pub const V1A: IdentityProfile = IdentityProfile(
 );
 
 /// Very high confidence, 1 piece of evidence, profile B (V1B)
-pub const V1B: IdentityProfile = IdentityProfile(
+pub const V1B: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V1B,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Four),
@@ -27,7 +30,8 @@ pub const V1B: IdentityProfile = IdentityProfile(
 );
 
 /// Very high confidence, 1 piece of evidence, profile C (V1C)
-pub const V1C: IdentityProfile = IdentityProfile(
+pub const V1C: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V1C,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Three),
@@ -40,7 +44,8 @@ pub const V1C: IdentityProfile = IdentityProfile(
 );
 
 /// Very high confidence, 1 piece of evidence, profile D (V1D)
-pub const V1D: IdentityProfile = IdentityProfile(
+pub const V1D: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V1D,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Four),
@@ -53,7 +58,8 @@ pub const V1D: IdentityProfile = IdentityProfile(
 );
 
 /// Very high confidence, 2 pieces of evidence, profile A (V2A)
-pub const V2A: IdentityProfile = IdentityProfile(
+pub const V2A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V2A,
     Scores {
         strength: Some(StrengthScore::Three),
         validity: Some(ValidityScore::Three),
@@ -72,7 +78,8 @@ pub const V2A: IdentityProfile = IdentityProfile(
 );
 
 /// Very high confidence, 2 pieces of evidence, profile B (V2B)
-pub const V2B: IdentityProfile = IdentityProfile(
+pub const V2B: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V2B,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Three),
@@ -91,7 +98,8 @@ pub const V2B: IdentityProfile = IdentityProfile(
 );
 
 /// Very high confidence, 2 pieces of evidence, profile C (V2C)
-pub const V2C: IdentityProfile = IdentityProfile(
+pub const V2C: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V2C,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Three),
@@ -110,7 +118,8 @@ pub const V2C: IdentityProfile = IdentityProfile(
 );
 
 /// Very high confidence, 2 pieces of evidence, profile D (V2D)
-pub const V2D: IdentityProfile = IdentityProfile(
+pub const V2D: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V2D,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Four),
@@ -129,7 +138,8 @@ pub const V2D: IdentityProfile = IdentityProfile(
 );
 
 /// Very high confidence, 3 pieces of evidence, profile A (V3A)
-pub const V3A: IdentityProfile = IdentityProfile(
+pub const V3A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::V3A,
     Scores {
         strength: Some(StrengthScore::Three),
         validity: Some(ValidityScore::Three),

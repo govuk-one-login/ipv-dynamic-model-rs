@@ -31,6 +31,18 @@ pub struct Cri {
     pub scores: Scores,
 }
 
+impl Cri {
+    #[must_use]
+    pub fn can_mitigate_ci(&self, ci: &String) -> bool {
+        self.mitigates_cis.contains(ci)
+    }
+
+    #[must_use]
+    pub fn can_mitigate_any_of_ci(&self, cis: &[&String]) -> bool {
+        cis.iter().any(|ci| self.can_mitigate_ci(ci))
+    }
+}
+
 impl PartialEq for Cri {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name

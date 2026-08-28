@@ -1,4 +1,7 @@
-#![allow(clippy::volatile_composites)]
+#![allow(
+    clippy::volatile_composites,
+    reason = "Required by Dioxus `asset!` macro"
+)]
 
 mod service_table;
 mod table_data;

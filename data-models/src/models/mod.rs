@@ -4,6 +4,8 @@ pub mod cri;
 pub mod owner;
 pub mod requests_per_second;
 pub mod score;
+pub mod score_type;
 pub mod scores;
 pub mod service;
+pub mod service_status;
 pub mod user_requirement;

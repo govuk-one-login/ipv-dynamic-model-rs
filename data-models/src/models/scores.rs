@@ -1,7 +1,9 @@
 use crate::models::score::{
     ActivityHistoryScore, IdentityFraudScore, StrengthScore, ValidityScore, VerificationScore,
 };
+use crate::models::score_type::ScoreType;
 use serde::{Deserialize, Serialize};
+use std::cmp::Ordering;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Scores {
@@ -59,6 +61,55 @@ pub trait HasScores {
         .copied()
         .filter(|score| *score)
         .count()
+    }
+
+    fn has_score_of_type(&self, score_type: ScoreType) -> bool {
+        match score_type {
+            ScoreType::Strength => self.has_strength_score(),
+            ScoreType::Validity => self.has_validity_score(),
+            ScoreType::Verification => self.has_verification_score(),
+            ScoreType::ActivityHistory => self.has_activity_history_score(),
+            ScoreType::IdentityFraud => self.has_identity_fraud_score(),
+        }
+    }
+
+    /// Based on `[ScoreType::order_of_score_importance]`
+    #[must_use]
+    fn most_important_score_type(&self) -> Option<ScoreType> {
+        ScoreType::order_of_score_importance()
+            .into_iter()
+            .find(|score_type| self.has_score_of_type(*score_type))
+    }
+
+    #[must_use]
+    fn compare_score_types_and_scores<H: HasScores>(&self, other: &H) -> Ordering {
+        match (
+            self.most_important_score_type(),
+            other.most_important_score_type(),
+        ) {
+            (Some(_), None) => Ordering::Greater,
+            (None, Some(_)) => Ordering::Less,
+            (None, None) => Ordering::Equal,
+            (Some(left_score), Some(right_score)) => {
+                let score_type_comparison = left_score.compare_importance_with(right_score);
+                if score_type_comparison == Ordering::Equal {
+                    // As they're equal it doesn't matter which we check
+                    let left = self.scores();
+                    let right = other.scores();
+                    match left_score {
+                        ScoreType::Strength => left.strength.cmp(&right.strength),
+                        ScoreType::Validity => left.validity.cmp(&right.validity),
+                        ScoreType::Verification => left.verification.cmp(&right.verification),
+                        ScoreType::ActivityHistory => {
+                            left.activity_history.cmp(&right.activity_history)
+                        }
+                        ScoreType::IdentityFraud => left.identity_fraud.cmp(&right.identity_fraud),
+                    }
+                } else {
+                    score_type_comparison
+                }
+            }
+        }
     }
 }
 

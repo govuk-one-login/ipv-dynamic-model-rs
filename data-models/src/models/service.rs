@@ -1,25 +1,5 @@
 use crate::prelude::*;
-use core::fmt;
 use core::ops::Deref;
-
-// Two degraded systems are not equivalent
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub enum ServiceStatus {
-    Good,
-    Degraded,
-    Off,
-}
-
-impl fmt::Display for ServiceStatus {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Good => write!(f, "good"),
-            Self::Degraded => write!(f, "degraded"),
-            Self::Off => write!(f, "off"),
-        }
-    }
-}
 
 /// Service wraps a CRI model to make a pretend running service of that model. You can turn the
 /// service on/off, simulate traffic, etc.
@@ -76,7 +56,7 @@ impl Service {
             return ServiceStatus::Off;
         }
 
-        if self.remaining_capacity() < 1.0 {
+        if *self.remaining_capacity() < 1.0 {
             return ServiceStatus::Degraded;
         }
 
@@ -86,11 +66,8 @@ impl Service {
     /// Tells you remaining capacity on the service. If the number is less than `1.0`, the service
     /// is considered saturated. This number is never negative.
     #[must_use]
-    fn remaining_capacity(&self) -> f64 {
-        self.cri
-            .throughput
-            .remaining_capacity(self.traffic)
-            .as_f64()
+    pub fn remaining_capacity(&self) -> RequestsPerSecond {
+        self.cri.throughput.remaining_capacity(self.traffic)
     }
 }
 
@@ -121,6 +98,12 @@ impl From<Cri> for Service {
             active: true,
             traffic: RequestsPerSecond::default(),
         }
+    }
+}
+
+impl HasScores for Service {
+    fn scores(&self) -> &Scores {
+        &self.cri.scores
     }
 }
 
