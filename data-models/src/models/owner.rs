@@ -34,3 +34,17 @@ mod test_utils {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        assert_eq!(format!("{}", Owner::Kiwi), "kiwi");
+        assert_eq!(format!("{}", Owner::Lime), "lime");
+        assert_eq!(format!("{}", Owner::Orange), "orange");
+        assert_eq!(format!("{}", Owner::Mobile), "mobile");
+        assert_eq!(format!("{}", Owner::External), "external");
+    }
+}

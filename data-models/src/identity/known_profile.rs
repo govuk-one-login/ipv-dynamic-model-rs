@@ -7,9 +7,9 @@ pub use high::*;
 mod very_high;
 pub use very_high::*;
 
+use crate::identity::Proofing;
 use crate::models::scores::Scores;
 use core::fmt;
-use crate::identity::Proofing;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum IdentityProfileName {
@@ -138,6 +138,7 @@ impl KnownIdentityProfile {
         ]
     }
 
+    #[must_use]
     pub const fn profiles_of(proofing: Proofing) -> &'static [Self] {
         match proofing {
             Proofing::P1 => Self::p1_profiles(),
@@ -145,6 +146,11 @@ impl KnownIdentityProfile {
             Proofing::P3 => Self::p3_profiles(),
             Proofing::P4 => Self::p4_profiles(),
         }
+    }
+
+    #[must_use]
+    pub fn is_profile_of(self, proofing: Proofing) -> bool {
+        Self::profiles_of(proofing).contains(&self)
     }
 }
 
@@ -184,5 +190,116 @@ impl From<IdentityProfileName> for KnownIdentityProfile {
             IdentityProfileName::L2B => L2B,
             IdentityProfileName::L3A => L3A,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_profile_from_name() {
+        // We'll use a macro to test that IdentityProfileNane::X is the same as the proile contained
+        // in variable X
+        macro_rules! profile_is_the_same_as_name {
+            ($profile:tt) => {
+                assert_eq!($profile, IdentityProfileName::$profile.into());
+            };
+        }
+
+        profile_is_the_same_as_name!(V1A);
+        profile_is_the_same_as_name!(V1B);
+        profile_is_the_same_as_name!(V1C);
+        profile_is_the_same_as_name!(V1D);
+        profile_is_the_same_as_name!(V2A);
+        profile_is_the_same_as_name!(V2B);
+        profile_is_the_same_as_name!(V2C);
+        profile_is_the_same_as_name!(V2D);
+        profile_is_the_same_as_name!(V3A);
+        profile_is_the_same_as_name!(H1A);
+        profile_is_the_same_as_name!(H1B);
+        profile_is_the_same_as_name!(H1C);
+        profile_is_the_same_as_name!(H2A);
+        profile_is_the_same_as_name!(H2B);
+        profile_is_the_same_as_name!(H2C);
+        profile_is_the_same_as_name!(H2D);
+        profile_is_the_same_as_name!(H2E);
+        profile_is_the_same_as_name!(H3A);
+        profile_is_the_same_as_name!(M1A);
+        profile_is_the_same_as_name!(M1B);
+        profile_is_the_same_as_name!(M1C);
+        profile_is_the_same_as_name!(M1D);
+        profile_is_the_same_as_name!(M2A);
+        profile_is_the_same_as_name!(M2B);
+        profile_is_the_same_as_name!(M2C);
+        profile_is_the_same_as_name!(M3A);
+        profile_is_the_same_as_name!(L1A);
+        profile_is_the_same_as_name!(L1B);
+        profile_is_the_same_as_name!(L1C);
+        profile_is_the_same_as_name!(L2A);
+        profile_is_the_same_as_name!(L2B);
+        profile_is_the_same_as_name!(L3A);
+    }
+
+    #[test]
+    fn test_name_display() {
+        // We'll use a macro to test that the hard coded identity profiles produce their own name
+        // when used in Display
+        macro_rules! profile_displays_name {
+            ($profile:tt) => {
+                assert_eq!(
+                    format!("{}", IdentityProfileName::$profile),
+                    stringify!($profile)
+                );
+            };
+        }
+
+        profile_displays_name!(V1A);
+        profile_displays_name!(V1B);
+        profile_displays_name!(V1C);
+        profile_displays_name!(V1D);
+        profile_displays_name!(V2A);
+        profile_displays_name!(V2B);
+        profile_displays_name!(V2C);
+        profile_displays_name!(V2D);
+        profile_displays_name!(V3A);
+        profile_displays_name!(H1A);
+        profile_displays_name!(H1B);
+        profile_displays_name!(H1C);
+        profile_displays_name!(H2A);
+        profile_displays_name!(H2B);
+        profile_displays_name!(H2C);
+        profile_displays_name!(H2D);
+        profile_displays_name!(H2E);
+        profile_displays_name!(H3A);
+        profile_displays_name!(M1A);
+        profile_displays_name!(M1B);
+        profile_displays_name!(M1C);
+        profile_displays_name!(M1D);
+        profile_displays_name!(M2A);
+        profile_displays_name!(M2B);
+        profile_displays_name!(M2C);
+        profile_displays_name!(M3A);
+        profile_displays_name!(L1A);
+        profile_displays_name!(L1B);
+        profile_displays_name!(L1C);
+        profile_displays_name!(L2A);
+        profile_displays_name!(L2B);
+        profile_displays_name!(L3A);
+    }
+
+    #[test]
+    fn test_profiles_are_inclusive() {
+        // Cheating a bit to do a double test as `profiles_of` is a tiny abstraction that also needs
+        // testing
+        let p1 = KnownIdentityProfile::profiles_of(Proofing::P1);
+        let p2 = KnownIdentityProfile::profiles_of(Proofing::P2);
+        let p3 = KnownIdentityProfile::profiles_of(Proofing::P3);
+        let p4 = KnownIdentityProfile::profiles_of(Proofing::P4);
+
+        // Transitively if all of p4 is in p3 then it is also in p2 and p1
+        assert!(p4.iter().all(|p4_profile| p3.contains(p4_profile)));
+        assert!(p3.iter().all(|p3_profile| p2.contains(p3_profile)));
+        assert!(p2.iter().all(|p2_profile| p1.contains(p2_profile)));
     }
 }

@@ -13,11 +13,6 @@ pub struct ProfileBuilder {
 
 impl ProfileBuilder {
     #[must_use]
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    #[must_use]
     pub fn is_at_least_as_strong_as(&self, other: &KnownIdentityProfile) -> bool {
         self.strength[0] >= other.1.strength
             && self.strength[1] >= other.2.and_then(|o| o.strength)
@@ -88,5 +83,9 @@ mod tests {
         };
         let profile = equal_to_known.to_known_profile(Proofing::P1);
         assert_eq!(profile, Some(M1C));
+
+        // Does not match higher proofing
+        let profile = equal_to_known.to_known_profile(Proofing::P3);
+        assert_eq!(profile, None);
     }
 }

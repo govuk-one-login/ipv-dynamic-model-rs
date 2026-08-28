@@ -28,3 +28,15 @@ impl fmt::Display for ServiceStatus {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        assert_eq!(format!("{}", ServiceStatus::Good), "good");
+        assert_eq!(format!("{}", ServiceStatus::Degraded), "degraded");
+        assert_eq!(format!("{}", ServiceStatus::Off), "off");
+    }
+}
