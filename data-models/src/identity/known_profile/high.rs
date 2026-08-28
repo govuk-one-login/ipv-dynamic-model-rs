@@ -1,7 +1,9 @@
+use crate::identity::known_profile::IdentityProfileName;
 use crate::prelude::*;
 
 /// High confidence, 1 piece of evidence, profile A (H1A)
-pub const H1A: IdentityProfile = IdentityProfile(
+pub const H1A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H1A,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Three),
@@ -14,7 +16,8 @@ pub const H1A: IdentityProfile = IdentityProfile(
 );
 
 /// High confidence, 1 piece of evidence, profile B (H1B)
-pub const H1B: IdentityProfile = IdentityProfile(
+pub const H1B: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H1B,
     Scores {
         strength: Some(StrengthScore::Three),
         validity: Some(ValidityScore::Three),
@@ -27,7 +30,8 @@ pub const H1B: IdentityProfile = IdentityProfile(
 );
 
 /// High confidence, 1 piece of evidence, profile C (H1C)
-pub const H1C: IdentityProfile = IdentityProfile(
+pub const H1C: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H1C,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Three),
@@ -40,7 +44,8 @@ pub const H1C: IdentityProfile = IdentityProfile(
 );
 
 /// High confidence, 2 pieces of evidence, profile A (H2A)
-pub const H2A: IdentityProfile = IdentityProfile(
+pub const H2A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H2A,
     Scores {
         strength: Some(StrengthScore::Two),
         validity: Some(ValidityScore::Two),
@@ -59,7 +64,8 @@ pub const H2A: IdentityProfile = IdentityProfile(
 );
 
 /// High confidence, 2 pieces of evidence, profile B (H2B)
-pub const H2B: IdentityProfile = IdentityProfile(
+pub const H2B: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H2B,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Two),
@@ -78,7 +84,8 @@ pub const H2B: IdentityProfile = IdentityProfile(
 );
 
 /// High confidence, 2 pieces of evidence, profile C (H2C)
-pub const H2C: IdentityProfile = IdentityProfile(
+pub const H2C: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H2C,
     Scores {
         strength: Some(StrengthScore::Three),
         validity: Some(ValidityScore::Three),
@@ -97,7 +104,8 @@ pub const H2C: IdentityProfile = IdentityProfile(
 );
 
 /// High confidence, 2 pieces of evidence, profile D (H2D)
-pub const H2D: IdentityProfile = IdentityProfile(
+pub const H2D: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H2D,
     Scores {
         strength: Some(StrengthScore::Three),
         validity: Some(ValidityScore::Three),
@@ -116,7 +124,8 @@ pub const H2D: IdentityProfile = IdentityProfile(
 );
 
 /// High confidence, 2 pieces of evidence, profile E (H2E)
-pub const H2E: IdentityProfile = IdentityProfile(
+pub const H2E: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H2E,
     Scores {
         strength: Some(StrengthScore::Four),
         validity: Some(ValidityScore::Three),
@@ -135,7 +144,8 @@ pub const H2E: IdentityProfile = IdentityProfile(
 );
 
 /// High confidence, 3 pieces of evidence, profile A (H3A)
-pub const H3A: IdentityProfile = IdentityProfile(
+pub const H3A: KnownIdentityProfile = KnownIdentityProfile(
+    IdentityProfileName::H3A,
     Scores {
         strength: Some(StrengthScore::Two),
         validity: Some(ValidityScore::Two),

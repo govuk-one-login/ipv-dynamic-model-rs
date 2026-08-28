@@ -1,7 +1,7 @@
 use crate::prelude::Claim;
 
-pub mod identity_profile;
-pub mod known_profiles;
+pub mod known_profile;
+pub mod profile_builder;
 
 /// Proofing is from the [Vectors of Trust RFC](https://datatracker.ietf.org/doc/html/rfc8485#section-2.1)
 /// which for us maps to our Identity Profile levels (Low, Medium, High, Very High)

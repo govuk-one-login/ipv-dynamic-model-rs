@@ -5,7 +5,7 @@ pub mod test_utils;
 pub mod user_journey;
 
 pub mod prelude {
-    pub use super::identity::{identity_profile::IdentityProfile, known_profiles::*};
+    pub use super::identity::known_profile::*;
     pub use super::models::{
         attribute::Attribute,
         claim::Claim,
