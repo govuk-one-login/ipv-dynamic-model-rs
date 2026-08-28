@@ -1,43 +1,47 @@
+//! # An important not for these filters.
+//!
+//! In order to prevent copying of the [`Service`] data, they must take a reference to a reference.
+//!
+//! For this reason all filters have the type `impl Fn(&&Service) -> bool`
+
 use crate::prelude::Service;
 use crate::user_journey::journey::Journey;
 
+/// Generic type for a function that takes a [`Vec`] of [`Service`]s and filters out useless ones
+///
 /// As we step through a user [`Journey`] and visit different services, not all services will be
 /// appropriate to visit. [`ServiceFilter`]s do not take into account specific users, they are a
 /// basic filter over the whole journey
 pub type ServiceFilter = fn(&mut Vec<&Service>, &Journey);
 
-/// Looks at which services a user already visited and removes them from the pool
-pub const FILTER_VISITED: ServiceFilter = |services, journey| {
+/// Create a filter that removes services already visited on the journey
+pub fn create_visited_filer(journey: &Journey) -> impl Fn(&&Service) -> bool {
     let visited = journey.get_visited_services();
-    services.retain(|s| !visited.contains(s));
-};
+    move |service| !visited.contains(&service)
+}
 
-/// Remove any services currently down from the list
-pub const FILTER_DOWN_SERVICES: ServiceFilter = |services, _journey| services.retain(|s| s.active);
+/// Create a filter that removes services that are down
+pub fn create_down_filter(_journey: &Journey) -> impl Fn(&&Service) -> bool {
+    |service| service.active
+}
 
-/// Filters out any service not part of CI mitigation for an existing CI. If there are no CIs all
-/// service will remain
-pub const FILTER_CI: ServiceFilter = |services, journey| {
+/// Create a filter that, if there's an unmitigated CI in the journey, will remove CIs that don't
+/// mitigate it
+pub fn create_ci_filter(journey: &Journey) -> impl Fn(&&Service) -> bool {
     let cis = journey.get_unmitigated_cis();
 
-    // If the user has no CIs, we won't touch the existing list
-    if cis.is_empty() {
-        return;
-    }
+    move |service| {
+        // If the user has no CIs, all services are valid
+        if cis.is_empty() {
+            return true;
+        }
 
-    // If any CIs can not be mitigated, clear all services, there is nowhere to go
-    'ci: for ci in &cis {
-        for service in services.iter() {
+        for ci in &cis {
             if service.can_mitigate_ci(ci) {
-                // The service can be mitigated we can move on
-                continue 'ci;
+                return true;
             }
         }
-        // If a ci can not be mitigated by any CI we give up
-        services.clear();
-        return;
-    }
 
-    // Otherwise return the services that can mitigate any of the current CIs
-    services.retain(|service| service.can_mitigate_any_of_ci(&cis));
-};
+        false
+    }
+}

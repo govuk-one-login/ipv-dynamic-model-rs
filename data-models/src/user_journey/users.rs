@@ -11,6 +11,19 @@ pub struct Users {
 
 impl Users {
     #[must_use]
+    pub const fn new(
+        requests_per_second: RequestsPerSecond,
+        requirements: HashMap<UserRequirement, Proportion>,
+    ) -> Self {
+        Self {
+            requests_per_second,
+            requirements,
+            cis: Vec::new(),
+            mitigated_cis: Vec::new(),
+        }
+    }
+
+    #[must_use]
     pub const fn get_rps(&self) -> RequestsPerSecond {
         self.requests_per_second
     }
@@ -25,7 +38,7 @@ impl Users {
 
     /// Set a proportion of users who can match a particular requirement
     pub fn set_requirement(&mut self, requirement: &UserRequirement, proportion: Proportion) {
-        self.requirements.insert(requirement.clone(), proportion);
+        self.requirements.insert(*requirement, proportion);
     }
 
     /// Allows us to determine if there are too many contraindicators, even if they have been
@@ -60,5 +73,23 @@ impl Users {
         left.set_requirement(requirement, Proportion::none());
 
         (left, right)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::prelude::SaturatingProportion;
+
+    #[test]
+    fn test_get_rps() {
+        let users = Users::new(
+            RequestsPerSecond::new(25.0).unwrap(),
+            HashMap::from([(
+                UserRequirement::DrivingLicense,
+                0.80.to_saturated_proportion(),
+            )]),
+        );
+        assert_eq!(*users.get_rps(), 25.0);
     }
 }

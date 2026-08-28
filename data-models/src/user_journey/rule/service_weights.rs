@@ -16,6 +16,10 @@ impl<'s> From<&'s Service> for ServiceWeight<'s> {
 }
 
 /// Push any service that is degraded to the back
+#[allow(
+    clippy::cast_precision_loss,
+    reason = "We're unlikely to have 2^52 services"
+)]
 pub fn create_sort_by_remaining_capacity(scale: f64) -> impl Fn(&mut Vec<ServiceWeight>) {
     move |services: &mut Vec<ServiceWeight>| {
         // Sort from decreasing capacity to most capacity

@@ -20,7 +20,7 @@ pub struct Cri {
     pub mitigates_cis: Vec<String>,
     pub success_rate: SuccessRate,
     #[serde(with = "yaml_serde::with::singleton_map")]
-    pub user_requirements: Option<UserRequirement>,
+    pub user_requirement: Option<UserRequirement>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub claims_required: Vec<Claim>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -72,7 +72,7 @@ pub mod test_utils {
                 possible_cis: vec![],
                 mitigates_cis: vec![],
                 success_rate: random_range(0.0..1.0),
-                user_requirements: UserRequirement::random_choice_option(0.3),
+                user_requirement: UserRequirement::random_choice_option(0.3),
                 claims_required: random_vec(0, 3, Claim::create_test_subject),
                 claims_produced: random_vec(0, 3, Claim::create_test_subject),
                 comments: random_string("description"),

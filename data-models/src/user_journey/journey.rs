@@ -1,31 +1,12 @@
 use crate::identity::Proofing;
 use crate::prelude::*;
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum JourneyStep {
-    Success(Users, Service),
-    CouldNotUse(Users, Service),
-    Failure(Users, Service),
-}
-
-impl JourneyStep {
-    #[must_use]
-    pub const fn get_service(&self) -> &Service {
-        match self {
-            Self::Success(_, service)
-            | Self::CouldNotUse(_, service)
-            | Self::Failure(_, service) => service,
-        }
-    }
-    #[must_use]
-    pub const fn get_users(&self) -> &Users {
-        match self {
-            Self::Success(users, _) | Self::CouldNotUse(users, _) | Self::Failure(users, _) => {
-                users
-            }
-        }
-    }
-}
+use crate::user_journey::journey_step::JourneyStep;
+use crate::user_journey::rule::service_filter::{
+    create_ci_filter, create_down_filter, create_visited_filer,
+};
+use crate::user_journey::rule::service_weights::{
+    ServiceWeight, create_sort_by_remaining_capacity,
+};
 
 pub enum CompletedStatus {
     Success(Users, KnownIdentityProfile),
@@ -72,23 +53,34 @@ impl Journey {
             .last()
             .map_or_else(Vec::new, |step| step.get_users().get_unmitigated_cis())
     }
-}
 
-/// A `Journeys` represents all Journeys a group of users could take through the system
-#[derive(Debug, Clone, PartialEq)]
-pub struct Journeys {
-    journeys: Vec<Journey>,
-    goal: Proofing,
-}
-
-impl Journeys {
+    /// Takes the next step in the journey.
+    ///
+    /// This modifies the current journey, however, if there are any branches in the next step, they
+    /// will be returned as a separate `[Vec]`.
+    ///
+    /// If there are no branches, the returned vector will be empty.
+    ///
+    /// If the journey has a [`CompletedStatus`], nothing will happen when calling this method.
     #[must_use]
-    pub fn is_complete(&self) -> bool {
-        self.journeys.iter().all(|j| j.completed_status().is_some())
-    }
+    pub fn step(&mut self, services: &[&Service]) -> Vec<Self> {
+        if self.completed_status().is_some() {
+            return Vec::new();
+        }
 
-    #[must_use]
-    pub fn step(_all_services: &[Service]) -> bool {
+        let mut possible_services_weighted = services
+            .iter()
+            .copied()
+            // First remove unusable services
+            .filter(create_down_filter(self))
+            .filter(create_visited_filer(self))
+            .filter(create_ci_filter(self))
+            // Next we'll swap to the weighted type for further processing
+            .map(ServiceWeight::from)
+            .collect();
+
+        create_sort_by_remaining_capacity(1.0)(&mut possible_services_weighted);
+
         todo!()
     }
 }
