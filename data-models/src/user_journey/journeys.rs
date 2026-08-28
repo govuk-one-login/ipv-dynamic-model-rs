@@ -12,7 +12,7 @@ pub struct Journeys {
 impl Journeys {
     #[must_use]
     pub fn is_complete(&self) -> bool {
-        self.journeys.iter().all(|j| j.completed_status().is_some())
+        self.journeys.iter().all(Journey::is_complete)
     }
 
     #[must_use]

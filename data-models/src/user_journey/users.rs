@@ -59,12 +59,12 @@ impl Users {
 
     /// Split the user pool by a specific requirement without changing any of the other proportions
     #[must_use]
-    pub fn split_by(self, requirement: &UserRequirement) -> (Self, Self) {
+    pub fn split_by(&self, requirement: &UserRequirement) -> (Self, Self) {
         let proportion = self.get_requirement(requirement);
         let (left_rps, right_rps) = proportion.split(self.get_rps());
 
         let mut left = self.clone();
-        let mut right = self;
+        let mut right = self.clone();
 
         left.requests_per_second = left_rps;
         left.set_requirement(requirement, Proportion::all());

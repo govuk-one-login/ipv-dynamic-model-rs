@@ -1,6 +1,8 @@
 pub mod journey;
-mod journey_step;
-mod journeys;
+pub mod journey_result;
+pub mod journey_step;
+pub mod journeys;
+
 pub mod proportion;
 pub mod rule;
 pub mod users;

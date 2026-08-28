@@ -6,6 +6,18 @@ pub struct ServiceWeight<'s> {
     weight: f64,
 }
 
+impl<'s> ServiceWeight<'s> {
+    #[must_use]
+    pub const fn get_service(&self) -> &'s Service {
+        self.service
+    }
+
+    #[must_use]
+    pub const fn get_weight(&self) -> f64 {
+        self.weight
+    }
+}
+
 impl<'s> From<&'s Service> for ServiceWeight<'s> {
     fn from(service: &'s Service) -> Self {
         ServiceWeight {

@@ -17,11 +17,11 @@ pub type ServiceFilter = fn(&mut Vec<&Service>, &Journey);
 /// Create a filter that removes services already visited on the journey
 pub fn create_visited_filer(journey: &Journey) -> impl Fn(&&Service) -> bool {
     let visited = journey.get_visited_services();
-    move |service| !visited.contains(&service)
+    move |service| !visited.contains(service)
 }
 
 /// Create a filter that removes services that are down
-pub fn create_down_filter(_journey: &Journey) -> impl Fn(&&Service) -> bool {
+pub fn create_down_filter() -> impl Fn(&&Service) -> bool {
     |service| service.active
 }
 

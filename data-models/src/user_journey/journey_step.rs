@@ -1,27 +1,19 @@
-use crate::prelude::{Service, Users};
+use crate::prelude::Service;
 
+/// Represents a single step of a journey, not the entire journey. A failed step or successful step
+/// still allows the journey to continue
 #[derive(Debug, Clone, PartialEq)]
 pub enum JourneyStep {
-    Success(Users, Service),
-    CouldNotUse(Users, Service),
-    Failure(Users, Service),
+    Success(Service),
+    CouldNotUse(Service),
+    Failure(Service),
 }
 
 impl JourneyStep {
     #[must_use]
     pub const fn get_service(&self) -> &Service {
         match self {
-            Self::Success(_, service)
-            | Self::CouldNotUse(_, service)
-            | Self::Failure(_, service) => service,
-        }
-    }
-    #[must_use]
-    pub const fn get_users(&self) -> &Users {
-        match self {
-            Self::Success(users, _) | Self::CouldNotUse(users, _) | Self::Failure(users, _) => {
-                users
-            }
+            Self::Success(service) | Self::CouldNotUse(service) | Self::Failure(service) => service,
         }
     }
 }
