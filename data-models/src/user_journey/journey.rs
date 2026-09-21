@@ -5,7 +5,7 @@ use crate::user_journey::rule::service_filter::{
     create_ci_filter, create_down_filter, create_visited_filer,
 };
 use crate::user_journey::rule::service_weights::{
-    ServiceWeight, create_sort_by_remaining_capacity,
+    ServiceWeight, create_weigh_by_remaining_capacity,
 };
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
@@ -95,7 +95,7 @@ impl Journey {
             .collect();
 
         // Apply some weightings
-        create_sort_by_remaining_capacity(1.0)(&mut possible_services_weighted);
+        create_weigh_by_remaining_capacity(1.0)(&mut possible_services_weighted);
 
         // Finally sort by the weight
         possible_services_weighted
@@ -111,8 +111,9 @@ impl Journey {
         for service_weight in possible_services_weighted {
             let service = service_weight.get_service();
 
-            if let Some(user_requirement) = service.user_requirement {
-                // let (users_with_requirement, remainder) = users.split_by(&user_requirement);
+            // If any user can be sent there, we'll send as many as possible
+            if service.user_requirement.is_none() {
+                // let service_users = users.take_proportion(20.)
             }
         }
 
