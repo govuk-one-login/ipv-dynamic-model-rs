@@ -108,6 +108,14 @@ impl Mul<Proportion> for RequestsPerSecond {
     }
 }
 
+impl TryFrom<f64> for RequestsPerSecond {
+    type Error = RequestsPerSecondError;
+
+    fn try_from(value: f64) -> Result<Self, Self::Error> {
+        Self::new(value)
+    }
+}
+
 #[cfg(feature = "test-utils")]
 pub mod test_utils {
     use crate::prelude::RequestsPerSecond;
@@ -153,6 +161,15 @@ mod tests {
     fn test_deref() {
         let rps = RequestsPerSecond::new(50.0).unwrap();
         assert_eq!(*rps, 50.0);
+    }
+
+    #[test]
+    fn test_try_from_f64() {
+        let rps: RequestsPerSecond = 50.0.try_into().unwrap();
+        assert_eq!(*rps, 50.0);
+
+        let not_rps = RequestsPerSecond::try_from(-50.0);
+        assert!(not_rps.is_err());
     }
 
     #[test]
