@@ -4,6 +4,7 @@ use crate::models::requests_per_second::RequestsPerSecond;
 use crate::models::scores::{HasScores, Scores};
 use crate::models::user_requirement::UserRequirement;
 use serde::{Deserialize, Serialize};
+use crate::user_journey::ci::CiLabel;
 
 type SuccessRate = f64;
 
@@ -33,7 +34,7 @@ pub struct Cri {
 
 impl Cri {
     #[must_use]
-    pub fn can_mitigate_ci(&self, ci: &String) -> bool {
+    pub fn can_mitigate_ci(&self, ci: &CiLabel) -> bool {
         self.mitigates_cis.contains(ci)
     }
 

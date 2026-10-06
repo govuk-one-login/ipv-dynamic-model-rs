@@ -1,3 +1,5 @@
+extern crate core;
+
 pub mod identity;
 pub mod models;
 #[cfg(feature = "test-utils")]

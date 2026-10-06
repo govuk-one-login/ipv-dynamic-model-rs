@@ -6,3 +6,4 @@ pub mod journeys;
 pub mod proportion;
 pub mod rule;
 pub mod users;
+pub mod ci;

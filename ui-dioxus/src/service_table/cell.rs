@@ -19,7 +19,7 @@ pub fn ServiceCell(row_content: Signal<RowContent>) -> Element {
 
                         input {
                             r#type: "checkbox",
-                            checked: "{s.get_active()}",
+                            checked: "{s.is_active()}",
                             onchange: move |event| {
                                 match event.value().as_str() {
                                     "true" => service.write().turn_on(),

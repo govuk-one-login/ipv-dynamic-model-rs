@@ -1,5 +1,6 @@
 use crate::identity::Proofing;
 use crate::prelude::*;
+use crate::user_journey::ci::Ci;
 use crate::user_journey::journey_step::JourneyStep;
 use crate::user_journey::rule::service_filter::{
     create_ci_filter, create_down_filter, create_visited_filer,
@@ -30,7 +31,7 @@ impl JourneyOutcome {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Journey {
     users: Users,
-    journeys: Vec<JourneyStep>,
+    steps: Vec<JourneyStep>,
     goal: Proofing,
     outcome: JourneyOutcome,
 }
@@ -40,7 +41,7 @@ impl Journey {
     pub fn new(users: Users, goal: Proofing) -> Self {
         Self {
             users,
-            journeys: Vec::with_capacity(20), // Cheating a bit but this number should be more than the most steps they can take
+            steps: Vec::with_capacity(20), // Cheating a bit but this number should be more than the most steps they can take
             goal,
             outcome: JourneyOutcome::default(),
         }
@@ -62,11 +63,11 @@ impl Journey {
 
     #[must_use]
     pub fn get_visited_services(&self) -> Vec<&Service> {
-        self.journeys.iter().map(JourneyStep::get_service).collect()
+        self.steps.iter().map(JourneyStep::get_service).collect()
     }
 
     #[must_use]
-    pub fn get_unmitigated_cis(&self) -> Vec<&String> {
+    pub fn get_unmitigated_cis(&self) -> Vec<&Ci> {
         self.users.get_unmitigated_cis()
     }
 
@@ -83,7 +84,7 @@ impl Journey {
             return vec![self];
         }
 
-        let mut possible_services_weighted = services
+        let mut possible_services_weighted: Vec<_> = services
             .iter()
             .copied()
             // First remove unusable services
@@ -93,6 +94,14 @@ impl Journey {
             // Next we'll swap to the weighted type for further processing
             .map(ServiceWeight::from)
             .collect();
+
+        // If the journey was incomplete and there is nowhere to send people, then they have failed
+        if possible_services_weighted.is_empty() {
+            return vec![Self {
+                outcome: JourneyOutcome::Failed,
+                ..self
+            }];
+        }
 
         // Apply some weightings
         create_weigh_by_remaining_capacity(1.0)(&mut possible_services_weighted);
@@ -105,25 +114,27 @@ impl Journey {
         // be accounted for.
         let mut users = self.get_users().clone();
         let branches = Vec::new();
+        let steps = self.steps;
 
         // ToDo: First pass look for all users who can go to unburdened servers.
 
-        for service_weight in possible_services_weighted {
-            let service = service_weight.get_service();
-
-            // If any user can be sent there, we'll send as many as possible
-            if service.user_requirement.is_none() {
-                // let service_users = users.take_proportion(20.)
-            }
-        }
-
-        // ToDo: Second pass, any remaining users should be sent to servers that are already at max
-        // throughput
-
-        // ToDo: Third pass, remaining users should be marked as failed.
-
-        // ToDo: Still need a way to identify that current users have completed their current
-        // journey
+        // for service_weight in possible_services_weighted {
+        //     let service = service_weight.get_service();
+        //
+        //     match service.user_requirement {
+        //         None => {
+        //             // No requirement, but each service will have a
+        //             branches.push(JourneyStep::Success(service));
+        //             branches.push(Self {
+        //                 users,
+        //                 steps,
+        //                 goal: Proofing::P1,
+        //                 outcome: Default::default(),
+        //             })
+        //         }
+        //         Some(requirement) => {}
+        //     }
+        // }
 
         branches
     }

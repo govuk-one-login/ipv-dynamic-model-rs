@@ -37,7 +37,7 @@ pub fn create_ci_filter(journey: &Journey) -> impl Fn(&&Service) -> bool {
         }
 
         for ci in &cis {
-            if service.can_mitigate_ci(ci) {
+            if service.can_mitigate_ci(ci.label()) {
                 return true;
             }
         }

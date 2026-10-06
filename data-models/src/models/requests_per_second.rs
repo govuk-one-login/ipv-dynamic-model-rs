@@ -1,6 +1,6 @@
 use crate::prelude::Proportion;
 use serde::{Deserialize, Serialize};
-use std::ops::{Deref, Mul};
+use std::ops::{Add, Deref, Div, Mul};
 use thiserror::Error;
 
 #[derive(Copy, Clone, Debug, Error)]
@@ -116,6 +116,22 @@ impl TryFrom<f64> for RequestsPerSecond {
     }
 }
 
+impl Add for RequestsPerSecond {
+    type Output = RequestsPerSecond;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self(self.0 + rhs.0)
+    }
+}
+
+impl Div for RequestsPerSecond {
+    type Output = f64;
+
+    fn div(self, rhs: Self) -> Self::Output {
+        self.0 / rhs.0
+    }
+}
+
 #[cfg(feature = "test-utils")]
 pub mod test_utils {
     use crate::prelude::RequestsPerSecond;
@@ -178,5 +194,15 @@ mod tests {
         let proportion = 0.4.to_saturated_proportion();
 
         assert_eq!(rps * proportion, RequestsPerSecond::new(20.0).unwrap())
+    }
+
+    #[test]
+    fn test_add() {
+        let left = RequestsPerSecond::new(20.0).unwrap();
+        let right = RequestsPerSecond::new(30.0).unwrap();
+
+        let added = left + right;
+
+        assert_eq!(*added, 50.0);
     }
 }

@@ -49,11 +49,11 @@ Further work, we may need to provide more complex configuration around the CRIs 
 ---
 
 How to find which service is next
-1. Do they have an identity profile at the requested proofing
+1. ✅ Do they have an identity profile at the requested proofing
    > If yes: we are done
-2. Remove visited
-3. Remove "off"/"down" services
-4. Do they have a CI
+2. ✅ Remove visited
+3. ✅ Remove "off"/"down" services
+4. ✅ Do they have a CI
    > If yes: remove all services that do not mitigate that CI
 5. Which profiles are still achievable?
    > If none: journey has failed

@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 anyhow = { workspace = true }
+itertools = "0.15.0"
 rand = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive"] }
 serde_repr = "0.1.21"

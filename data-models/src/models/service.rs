@@ -22,7 +22,7 @@ impl Service {
 
     /// Lets you turn the service on of off
     #[must_use]
-    pub const fn get_active(&self) -> bool {
+    pub const fn is_active(&self) -> bool {
         self.active
     }
 
@@ -144,11 +144,11 @@ mod tests {
         let cri = Cri::create_test_subject();
         let mut service = Service::new(cri.clone());
 
-        assert_eq!(service.get_active(), true);
+        assert_eq!(service.is_active(), true);
         service.turn_off();
-        assert_eq!(service.get_active(), false);
+        assert_eq!(service.is_active(), false);
         service.turn_on();
-        assert_eq!(service.get_active(), true);
+        assert_eq!(service.is_active(), true);
     }
 
     #[test]
