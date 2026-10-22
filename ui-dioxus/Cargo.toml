@@ -14,7 +14,6 @@ yaml_serde = { workspace = true }
 
 [dev-dependencies]
 data-models = { workspace = true, features = ["test-utils"] }
-rand = { workspace = true }
 
 [features]
 default = ["desktop"]
