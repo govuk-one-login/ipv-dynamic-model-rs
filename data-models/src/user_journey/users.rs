@@ -250,10 +250,22 @@ mod tests {
         let (left, right) = users.split_by(UserRequirement::SmartPhone);
         assert!(approximately_eq_f64(*left.get_rps(), 20.0));
         assert!(approximately_eq_f64(*right.get_rps(), 5.0));
-        assert_eq!(left.get_requirement(UserRequirement::SmartPhone), Proportion::all());
-        assert_eq!(left.get_requirement(UserRequirement::Passport), 0.5.to_saturated_proportion());
-        assert_eq!(right.get_requirement(UserRequirement::SmartPhone), Proportion::none());
-        assert_eq!(right.get_requirement(UserRequirement::Passport), 0.5.to_saturated_proportion());
+        assert_eq!(
+            left.get_requirement(UserRequirement::SmartPhone),
+            Proportion::all()
+        );
+        assert_eq!(
+            left.get_requirement(UserRequirement::Passport),
+            0.5.to_saturated_proportion()
+        );
+        assert_eq!(
+            right.get_requirement(UserRequirement::SmartPhone),
+            Proportion::none()
+        );
+        assert_eq!(
+            right.get_requirement(UserRequirement::Passport),
+            0.5.to_saturated_proportion()
+        );
     }
 
     #[test]
@@ -271,7 +283,13 @@ mod tests {
 
         assert!(approximately_eq_f64(*added.requests_per_second, 25.0));
         assert!(approximately_eq_f64(*added.requests_per_second, 25.0));
-        assert!(approximately_eq_f64(*added.get_requirement(UserRequirement::SmartPhone), 0.8));
-        assert!(approximately_eq_f64(*added.get_requirement(UserRequirement::Passport), 0.5));
+        assert!(approximately_eq_f64(
+            *added.get_requirement(UserRequirement::SmartPhone),
+            0.8
+        ));
+        assert!(approximately_eq_f64(
+            *added.get_requirement(UserRequirement::Passport),
+            0.5
+        ));
     }
 }

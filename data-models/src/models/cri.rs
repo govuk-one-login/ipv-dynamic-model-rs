@@ -3,8 +3,8 @@ use crate::models::owner::Owner;
 use crate::models::requests_per_second::RequestsPerSecond;
 use crate::models::scores::{HasScores, Scores};
 use crate::models::user_requirement::UserRequirement;
-use serde::{Deserialize, Serialize};
 use crate::user_journey::ci::CiLabel;
+use serde::{Deserialize, Serialize};
 
 type SuccessRate = f64;
 

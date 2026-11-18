@@ -131,7 +131,6 @@ pub trait SaturatingProportion {
     fn to_saturated_proportion(self) -> Proportion;
 }
 
-
 /// Turns an `f64` into a `Proportion`. If the `f64` was greater than `1.0` or less than `0.0` it
 /// will be clamped.
 /// ```
